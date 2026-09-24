@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ros2_env:
     build: .
@@ -7,17 +5,14 @@ services:
     # 호스트의 디렉토리를 컨테이너에 동기화
     volumes:
       - ./ros2_ws/src:/ros2_ws/src
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    # GUI 출력을 위한 환경변수
+    # ROS2 노드 간 통신을 위한 공통 환경변수
     environment:
-      - DISPLAY=${DISPLAY}
-      - QT_X11_NO_MITSHM=1
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
+      - ROS_LOCALHOST_ONLY=${ROS_LOCALHOST_ONLY:-0}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
     # ROS2 노드 간 통신을 위해 호스트 네트워크 사용
     network_mode: host
     # 컨테이너를 백그라운드에서 유지
     stdin_open: true 
     tty: true        
-    devices:
-      - "/dev/video0:/dev/video0"   # B(Vision)용 카메라 포트
-      - "/dev/ttyUSB0:/dev/ttyUSB0" # C(Safety)용 STM32 시리얼 포트
     command: /bin/bash

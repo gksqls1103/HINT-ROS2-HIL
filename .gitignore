@@ -6,3 +6,6 @@ ros2_ws/log/
 # OS/IDE
 .vscode/
 .DS_Store
+
+# Local Docker environment
+.env

@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-cv-bridge \
+    ros-humble-rmw-cyclonedds-cpp \
     libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
 

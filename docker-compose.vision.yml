@@ -1,0 +1,5 @@
+services:
+  ros2_env:
+    # B(Vision) 담당자의 카메라 장치만 컨테이너에 연결
+    devices:
+      - "${VISION_CAMERA_DEVICE:-/dev/video0}:/dev/video0"

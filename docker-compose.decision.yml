@@ -1,0 +1,5 @@
+services:
+  ros2_env:
+    # D(Decision) 담당자는 실제 카메라와 STM32 없이 판단 노드를 개발
+    environment:
+      - HIL_ROLE=decision
