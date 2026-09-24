@@ -1,0 +1,8 @@
+# ROS2 Build Workspace
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# OS/IDE
+.vscode/
+.DS_Store
