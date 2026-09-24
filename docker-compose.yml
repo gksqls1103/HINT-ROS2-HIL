@@ -17,4 +17,7 @@ services:
     # 컨테이너를 백그라운드에서 유지
     stdin_open: true 
     tty: true        
+    devices:
+      - "/dev/video0:/dev/video0"   # B(Vision)용 카메라 포트
+      - "/dev/ttyUSB0:/dev/ttyUSB0" # C(Safety)용 STM32 시리얼 포트
     command: /bin/bash
