@@ -1,0 +1,433 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <!-- 중심선 길이 3000.004 m의 가벼운 조각형 트랙입니다. -->
+  <world name="track_3km">
+    <!-- 기본 중력과 실시간 물리 계산을 설정합니다. -->
+    <gravity>0 0 -9.80665</gravity>
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.002</max_step_size>
+      <real_time_update_rate>500</real_time_update_rate>
+    </physics>
+
+    <!-- 햇빛과 실제 충돌을 담당하는 바닥입니다. -->
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!-- 도로는 긴 road 메시 대신 24개의 가벼운 시각 조각으로 표시합니다. -->
+    <model name="track_surface">
+      <static>true</static>
+      <!-- road 1번 조각입니다. -->
+      <link name="road_1">
+        <pose>-250.514 159.155 0.021 0 0 0.000000</pose>
+        <visual name="visual"><geometry><box><size>501.628 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 2번 조각입니다. -->
+      <link name="road_2">
+        <pose>250.514 159.155 0.021 0 0 0.000000</pose>
+        <visual name="visual"><geometry><box><size>501.628 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 3번 조각입니다. -->
+      <link name="road_3">
+        <pose>525.619 155.260 0.021 0 0 -0.157089</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 4번 조각입니다. -->
+      <link name="road_4">
+        <pose>572.393 140.062 0.021 0 0 -0.471228</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 5번 조각입니다. -->
+      <link name="road_5">
+        <pose>612.182 111.154 0.021 0 0 -0.785398</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 6번 조각입니다. -->
+      <link name="road_6">
+        <pose>641.090 71.365 0.021 0 0 -1.099569</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 7번 조각입니다. -->
+      <link name="road_7">
+        <pose>656.288 24.590 0.021 0 0 -1.413707</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 8번 조각입니다. -->
+      <link name="road_8">
+        <pose>656.288 -24.590 0.021 0 0 -1.727886</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 9번 조각입니다. -->
+      <link name="road_9">
+        <pose>641.090 -71.365 0.021 0 0 -2.042024</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 10번 조각입니다. -->
+      <link name="road_10">
+        <pose>612.182 -111.154 0.021 0 0 -2.356194</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 11번 조각입니다. -->
+      <link name="road_11">
+        <pose>572.393 -140.062 0.021 0 0 -2.670365</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 12번 조각입니다. -->
+      <link name="road_12">
+        <pose>525.619 -155.260 0.021 0 0 -2.984503</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 13번 조각입니다. -->
+      <link name="road_13">
+        <pose>250.514 -159.155 0.021 0 0 3.141593</pose>
+        <visual name="visual"><geometry><box><size>501.628 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 14번 조각입니다. -->
+      <link name="road_14">
+        <pose>-250.514 -159.155 0.021 0 0 3.141593</pose>
+        <visual name="visual"><geometry><box><size>501.628 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 15번 조각입니다. -->
+      <link name="road_15">
+        <pose>-525.619 -155.260 0.021 0 0 2.984503</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 16번 조각입니다. -->
+      <link name="road_16">
+        <pose>-572.393 -140.062 0.021 0 0 2.670365</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 17번 조각입니다. -->
+      <link name="road_17">
+        <pose>-612.182 -111.154 0.021 0 0 2.356194</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 18번 조각입니다. -->
+      <link name="road_18">
+        <pose>-641.090 -71.365 0.021 0 0 2.042024</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 19번 조각입니다. -->
+      <link name="road_19">
+        <pose>-656.288 -24.590 0.021 0 0 1.727886</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 20번 조각입니다. -->
+      <link name="road_20">
+        <pose>-656.288 24.590 0.021 0 0 1.413707</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 21번 조각입니다. -->
+      <link name="road_21">
+        <pose>-641.090 71.365 0.021 0 0 1.099569</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 22번 조각입니다. -->
+      <link name="road_22">
+        <pose>-612.182 111.154 0.021 0 0 0.785398</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 23번 조각입니다. -->
+      <link name="road_23">
+        <pose>-572.393 140.062 0.021 0 0 0.471228</pose>
+        <visual name="visual"><geometry><box><size>50.395 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+      <!-- road 24번 조각입니다. -->
+      <link name="road_24">
+        <pose>-525.619 155.260 0.021 0 0 0.157089</pose>
+        <visual name="visual"><geometry><box><size>50.394 12 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/Black</name></script></material></visual>
+      </link>
+    </model>
+
+    <!-- 흰색 중앙 차선도 동일한 경로의 가벼운 조각으로 표시합니다. -->
+    <model name="center_lane">
+      <static>true</static>
+      <!-- lane 1번 조각입니다. -->
+      <link name="lane_1">
+        <pose>-250.514 159.155 0.043 0 0 0.000000</pose>
+        <visual name="visual"><geometry><box><size>501.628 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 2번 조각입니다. -->
+      <link name="lane_2">
+        <pose>250.514 159.155 0.043 0 0 0.000000</pose>
+        <visual name="visual"><geometry><box><size>501.628 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 3번 조각입니다. -->
+      <link name="lane_3">
+        <pose>525.619 155.260 0.043 0 0 -0.157089</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 4번 조각입니다. -->
+      <link name="lane_4">
+        <pose>572.393 140.062 0.043 0 0 -0.471228</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 5번 조각입니다. -->
+      <link name="lane_5">
+        <pose>612.182 111.154 0.043 0 0 -0.785398</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 6번 조각입니다. -->
+      <link name="lane_6">
+        <pose>641.090 71.365 0.043 0 0 -1.099569</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 7번 조각입니다. -->
+      <link name="lane_7">
+        <pose>656.288 24.590 0.043 0 0 -1.413707</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 8번 조각입니다. -->
+      <link name="lane_8">
+        <pose>656.288 -24.590 0.043 0 0 -1.727886</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 9번 조각입니다. -->
+      <link name="lane_9">
+        <pose>641.090 -71.365 0.043 0 0 -2.042024</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 10번 조각입니다. -->
+      <link name="lane_10">
+        <pose>612.182 -111.154 0.043 0 0 -2.356194</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 11번 조각입니다. -->
+      <link name="lane_11">
+        <pose>572.393 -140.062 0.043 0 0 -2.670365</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 12번 조각입니다. -->
+      <link name="lane_12">
+        <pose>525.619 -155.260 0.043 0 0 -2.984503</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 13번 조각입니다. -->
+      <link name="lane_13">
+        <pose>250.514 -159.155 0.043 0 0 3.141593</pose>
+        <visual name="visual"><geometry><box><size>501.628 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 14번 조각입니다. -->
+      <link name="lane_14">
+        <pose>-250.514 -159.155 0.043 0 0 3.141593</pose>
+        <visual name="visual"><geometry><box><size>501.628 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 15번 조각입니다. -->
+      <link name="lane_15">
+        <pose>-525.619 -155.260 0.043 0 0 2.984503</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 16번 조각입니다. -->
+      <link name="lane_16">
+        <pose>-572.393 -140.062 0.043 0 0 2.670365</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 17번 조각입니다. -->
+      <link name="lane_17">
+        <pose>-612.182 -111.154 0.043 0 0 2.356194</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 18번 조각입니다. -->
+      <link name="lane_18">
+        <pose>-641.090 -71.365 0.043 0 0 2.042024</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 19번 조각입니다. -->
+      <link name="lane_19">
+        <pose>-656.288 -24.590 0.043 0 0 1.727886</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 20번 조각입니다. -->
+      <link name="lane_20">
+        <pose>-656.288 24.590 0.043 0 0 1.413707</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 21번 조각입니다. -->
+      <link name="lane_21">
+        <pose>-641.090 71.365 0.043 0 0 1.099569</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 22번 조각입니다. -->
+      <link name="lane_22">
+        <pose>-612.182 111.154 0.043 0 0 0.785398</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 23번 조각입니다. -->
+      <link name="lane_23">
+        <pose>-572.393 140.062 0.043 0 0 0.471228</pose>
+        <visual name="visual"><geometry><box><size>50.395 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+      <!-- lane 24번 조각입니다. -->
+      <link name="lane_24">
+        <pose>-525.619 155.260 0.043 0 0 0.157089</pose>
+        <visual name="visual"><geometry><box><size>50.394 0.18 0.02</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual>
+      </link>
+    </model>
+
+    <!-- 출발 지점을 표시하는 흰색 정지선입니다. -->
+    <model name="start_stop_line">
+      <static>true</static>
+      <pose>-450 159.155 0.055 0 0 0</pose>
+      <link name="line"><visual name="visual"><geometry><box><size>0.6 12 0.025</size></box></geometry><material><script><uri>file://media/materials/scripts/gazebo.material</uri><name>Gazebo/White</name></script></material></visual></link>
+    </model>
+
+    <!-- 차량이 회피할 수 있도록 한쪽 차선에 배치한 장애물입니다. -->
+    <model name="obstacle_top_1"><static>true</static><pose>-200 157.155 0.75 0 0 0</pose><link name="body"><collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision><visual name="visual"><geometry><box><size>3 2 1.5</size></box></geometry><material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material></visual></link></model>
+    <!-- 차량이 회피할 수 있도록 한쪽 차선에 배치한 장애물입니다. -->
+    <model name="obstacle_top_2"><static>true</static><pose>250 161.155 0.75 0 0 0</pose><link name="body"><collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision><visual name="visual"><geometry><box><size>3 2 1.5</size></box></geometry><material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material></visual></link></model>
+    <!-- 차량이 회피할 수 있도록 한쪽 차선에 배치한 장애물입니다. -->
+    <model name="obstacle_right_curve"><static>true</static><pose>658.183 -2 0.75 0 0 0</pose><link name="body"><collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision><visual name="visual"><geometry><box><size>3 2 1.5</size></box></geometry><material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material></visual></link></model>
+    <!-- 차량이 회피할 수 있도록 한쪽 차선에 배치한 장애물입니다. -->
+    <model name="obstacle_bottom"><static>true</static><pose>0 -157.155 0.75 0 0 0</pose><link name="body"><collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision><visual name="visual"><geometry><box><size>3 2 1.5</size></box></geometry><material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material></visual></link></model>
+    <!-- 차량이 회피할 수 있도록 한쪽 차선에 배치한 장애물입니다. -->
+    <model name="obstacle_left_curve"><static>true</static><pose>-658.183 2 0.75 0 0 0</pose><link name="body"><collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision><visual name="visual"><geometry><box><size>3 2 1.5</size></box></geometry><material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material></visual></link></model>
+
+    <!-- /cmd_vel 명령으로 움직이는 4륜 파란색 세단입니다. -->
+    <model name="simple_vehicle">
+      <!-- 출발선 뒤쪽 오른쪽 차선에 차량을 놓습니다. -->
+      <pose>-465 156.5 0 0 0 0</pose>
+
+      <!-- 차체 링크에 하부 차체, 보닛, 트렁크, 캐빈과 유리를 함께 표현합니다. -->
+      <link name="chassis">
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0.75 0 0 0</pose>
+          <mass>1250</mass>
+          <inertia><ixx>420</ixx><iyy>2100</iyy><izz>2250</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia>
+        </inertial>
+
+        <!-- 실제 충돌 판정에 사용하는 세단 하부 차체입니다. -->
+        <collision name="body_collision">
+          <pose>0 0 0.72 0 0 0</pose>
+          <geometry><box><size>4.6 1.8 0.55</size></box></geometry>
+        </collision>
+
+        <!-- 파란색 세단의 긴 하부 차체입니다. -->
+        <visual name="lower_body">
+          <pose>0 0 0.72 0 0 0</pose>
+          <geometry><box><size>4.6 1.8 0.55</size></box></geometry>
+          <material><ambient>0.03 0.15 0.75 1</ambient><diffuse>0.03 0.2 0.9 1</diffuse></material>
+        </visual>
+
+        <!-- 차량 앞부분의 보닛입니다. -->
+        <visual name="hood">
+          <pose>1.55 0 1.04 0 0 0</pose>
+          <geometry><box><size>1.35 1.72 0.22</size></box></geometry>
+          <material><ambient>0.03 0.15 0.75 1</ambient><diffuse>0.03 0.2 0.9 1</diffuse></material>
+        </visual>
+
+        <!-- 차량 뒤쪽의 트렁크입니다. -->
+        <visual name="trunk">
+          <pose>-1.72 0 1.02 0 0 0</pose>
+          <geometry><box><size>1.05 1.72 0.24</size></box></geometry>
+          <material><ambient>0.03 0.15 0.75 1</ambient><diffuse>0.03 0.2 0.9 1</diffuse></material>
+        </visual>
+
+        <!-- 운전자와 승객 공간을 표현하는 캐빈입니다. -->
+        <visual name="cabin">
+          <pose>-0.15 0 1.28 0 0 0</pose>
+          <geometry><box><size>2.35 1.58 0.75</size></box></geometry>
+          <material><ambient>0.04 0.18 0.68 1</ambient><diffuse>0.05 0.25 0.85 1</diffuse></material>
+        </visual>
+
+        <!-- 앞유리와 뒷유리를 어두운 청색으로 표시합니다. -->
+        <visual name="front_windshield">
+          <pose>0.88 0 1.37 0 0.45 0</pose>
+          <geometry><box><size>0.06 1.5 0.62</size></box></geometry>
+          <material><ambient>0.02 0.08 0.12 1</ambient><diffuse>0.04 0.16 0.22 1</diffuse></material>
+        </visual>
+        <visual name="rear_windshield">
+          <pose>-1.18 0 1.37 0 -0.45 0</pose>
+          <geometry><box><size>0.06 1.5 0.62</size></box></geometry>
+          <material><ambient>0.02 0.08 0.12 1</ambient><diffuse>0.04 0.16 0.22 1</diffuse></material>
+        </visual>
+
+        <!-- 좌우 측면 유리를 표시합니다. -->
+        <visual name="left_side_window">
+          <pose>-0.15 0.801 1.38 0 0 0</pose>
+          <geometry><box><size>1.75 0.03 0.48</size></box></geometry>
+          <material><ambient>0.02 0.08 0.12 1</ambient><diffuse>0.04 0.16 0.22 1</diffuse></material>
+        </visual>
+        <visual name="right_side_window">
+          <pose>-0.15 -0.801 1.38 0 0 0</pose>
+          <geometry><box><size>1.75 0.03 0.48</size></box></geometry>
+          <material><ambient>0.02 0.08 0.12 1</ambient><diffuse>0.04 0.16 0.22 1</diffuse></material>
+        </visual>
+
+        <!-- 차량의 앞쪽 흰색 전조등 두 개입니다. -->
+        <visual name="left_headlight"><pose>2.305 0.58 0.82 0 0 0</pose><geometry><box><size>0.03 0.42 0.2</size></box></geometry><material><ambient>1 1 0.75 1</ambient><diffuse>1 1 0.75 1</diffuse></material></visual>
+        <visual name="right_headlight"><pose>2.305 -0.58 0.82 0 0 0</pose><geometry><box><size>0.03 0.42 0.2</size></box></geometry><material><ambient>1 1 0.75 1</ambient><diffuse>1 1 0.75 1</diffuse></material></visual>
+
+        <!-- 차량의 뒤쪽 빨간색 후미등 두 개입니다. -->
+        <visual name="left_tail_light"><pose>-2.305 0.58 0.82 0 0 0</pose><geometry><box><size>0.03 0.42 0.2</size></box></geometry><material><ambient>1 0.02 0.02 1</ambient><diffuse>1 0.02 0.02 1</diffuse></material></visual>
+        <visual name="right_tail_light"><pose>-2.305 -0.58 0.82 0 0 0</pose><geometry><box><size>0.03 0.42 0.2</size></box></geometry><material><ambient>1 0.02 0.02 1</ambient><diffuse>1 0.02 0.02 1</diffuse></material></visual>
+      </link>
+
+      <!-- 왼쪽 앞바퀴입니다. -->
+      <link name="front_left_wheel">
+        <pose>1.42 0.96 0.39 -1.5707 0 0</pose>
+        <inertial><mass>18</mass><inertia><ixx>0.9</ixx><iyy>0.9</iyy><izz>0.9</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.36</radius></sphere></geometry><surface><friction><ode><mu>1.2</mu><mu2>1.2</mu2><slip1>0</slip1><slip2>0</slip2></ode></friction><contact><ode><soft_cfm>0</soft_cfm><soft_erp>0.2</soft_erp><kp>1e+13</kp><kd>1</kd><max_vel>0.01</max_vel><min_depth>0.001</min_depth></ode></contact></surface></collision>
+        <visual name="tire"><geometry><cylinder><radius>0.36</radius><length>0.24</length></cylinder></geometry><material><ambient>0.025 0.025 0.025 1</ambient><diffuse>0.04 0.04 0.04 1</diffuse></material></visual>
+      </link>
+
+      <!-- 오른쪽 앞바퀴입니다. -->
+      <link name="front_right_wheel">
+        <pose>1.42 -0.96 0.39 -1.5707 0 0</pose>
+        <inertial><mass>18</mass><inertia><ixx>0.9</ixx><iyy>0.9</iyy><izz>0.9</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.36</radius></sphere></geometry><surface><friction><ode><mu>1.2</mu><mu2>1.2</mu2><slip1>0</slip1><slip2>0</slip2></ode></friction><contact><ode><soft_cfm>0</soft_cfm><soft_erp>0.2</soft_erp><kp>1e+13</kp><kd>1</kd><max_vel>0.01</max_vel><min_depth>0.001</min_depth></ode></contact></surface></collision>
+        <visual name="tire"><geometry><cylinder><radius>0.36</radius><length>0.24</length></cylinder></geometry><material><ambient>0.025 0.025 0.025 1</ambient><diffuse>0.04 0.04 0.04 1</diffuse></material></visual>
+      </link>
+
+      <!-- 왼쪽 뒷바퀴입니다. -->
+      <link name="rear_left_wheel">
+        <pose>-1.42 0.96 0.39 -1.5707 0 0</pose>
+        <inertial><mass>18</mass><inertia><ixx>0.9</ixx><iyy>0.9</iyy><izz>0.9</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.36</radius></sphere></geometry><surface><friction><ode><mu>1.2</mu><mu2>1.2</mu2><slip1>0</slip1><slip2>0</slip2></ode></friction><contact><ode><soft_cfm>0</soft_cfm><soft_erp>0.2</soft_erp><kp>1e+13</kp><kd>1</kd><max_vel>0.01</max_vel><min_depth>0.001</min_depth></ode></contact></surface></collision>
+        <visual name="tire"><geometry><cylinder><radius>0.36</radius><length>0.24</length></cylinder></geometry><material><ambient>0.025 0.025 0.025 1</ambient><diffuse>0.04 0.04 0.04 1</diffuse></material></visual>
+      </link>
+
+      <!-- 오른쪽 뒷바퀴입니다. -->
+      <link name="rear_right_wheel">
+        <pose>-1.42 -0.96 0.39 -1.5707 0 0</pose>
+        <inertial><mass>18</mass><inertia><ixx>0.9</ixx><iyy>0.9</iyy><izz>0.9</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.36</radius></sphere></geometry><surface><friction><ode><mu>1.2</mu><mu2>1.2</mu2><slip1>0</slip1><slip2>0</slip2></ode></friction><contact><ode><soft_cfm>0</soft_cfm><soft_erp>0.2</soft_erp><kp>1e+13</kp><kd>1</kd><max_vel>0.01</max_vel><min_depth>0.001</min_depth></ode></contact></surface></collision>
+        <visual name="tire"><geometry><cylinder><radius>0.36</radius><length>0.24</length></cylinder></geometry><material><ambient>0.025 0.025 0.025 1</ambient><diffuse>0.04 0.04 0.04 1</diffuse></material></visual>
+      </link>
+
+      <!-- 차체와 네 개의 실제 바퀴를 회전 관절로 연결합니다. -->
+      <joint name="front_left_wheel_joint" type="revolute"><parent>chassis</parent><child>front_left_wheel</child><axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis></joint>
+      <joint name="front_right_wheel_joint" type="revolute"><parent>chassis</parent><child>front_right_wheel</child><axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis></joint>
+      <joint name="rear_left_wheel_joint" type="revolute"><parent>chassis</parent><child>rear_left_wheel</child><axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis></joint>
+      <joint name="rear_right_wheel_joint" type="revolute"><parent>chassis</parent><child>rear_right_wheel</child><axis><xyz>0 0 1</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis></joint>
+
+      <!-- Vehicle Node가 전달한 내부 명령을 네 바퀴 속도로 바꿉니다. -->
+      <plugin name="vehicle_diff_drive" filename="libgazebo_ros_diff_drive.so">
+        <ros><remapping>cmd_vel:=/vehicle/control_cmd</remapping><remapping>odom:=/vehicle/odom</remapping></ros>
+        <update_rate>50</update_rate>
+        <num_wheel_pairs>2</num_wheel_pairs>
+        <left_joint>front_left_wheel_joint</left_joint>
+        <right_joint>front_right_wheel_joint</right_joint>
+        <left_joint>rear_left_wheel_joint</left_joint>
+        <right_joint>rear_right_wheel_joint</right_joint>
+        <wheel_separation>1.92</wheel_separation>
+        <wheel_separation>1.92</wheel_separation>
+        <wheel_diameter>0.72</wheel_diameter>
+        <wheel_diameter>0.72</wheel_diameter>
+        <max_wheel_torque>1200</max_wheel_torque>
+        <max_wheel_acceleration>3.0</max_wheel_acceleration>
+        <publish_odom>true</publish_odom>
+        <publish_odom_tf>true</publish_odom_tf>
+        <odometry_frame>odom</odometry_frame>
+        <robot_base_frame>chassis</robot_base_frame>
+      </plugin>
+    </model>
+
+    <!-- 시작할 때 차량 근처를 볼 수 있는 카메라입니다. -->
+    <gui fullscreen="0">
+      <camera name="vehicle_camera">
+        <pose>-475 135 12 0 0.45 0.75</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>

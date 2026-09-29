@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>vehicle_node</name>
+  <version>0.1.0</version>
+  <description>Gazebo 차량 명령 구독 노드와 C++ 주행 명령 GUI</description>
+  <maintainer email="lee@example.com">lee</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- CMake 방식의 ROS 2 패키지를 빌드할 때 사용합니다. -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- C++ ROS 2 통신과 차량 메시지에 필요한 패키지입니다. -->
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+
+  <!-- Gazebo와 XML launch 파일을 실행할 때 필요한 패키지입니다. -->
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_xml</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+
+  <export>
+    <!-- 이 패키지를 ament_cmake 방식으로 빌드한다고 선언합니다. -->
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

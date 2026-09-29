@@ -1,0 +1,266 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <!-- 중심선 길이가 약 3 km인 폐쇄형 타원 트랙입니다. -->
+  <world name="track_3km">
+    <!-- 지구와 같은 방향의 중력을 사용합니다. -->
+    <gravity>0 0 -9.80665</gravity>
+
+    <!-- 차량 물리 계산을 위한 기본 설정입니다. -->
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- 햇빛과 충돌 가능한 평평한 바닥을 추가합니다. -->
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!--
+      폭 12 m 도로입니다.
+      곡선을 여러 직선 조각으로 표현했을 때의 오차까지 보정하여
+      월드 파일의 중심선 점 사이 거리가 합계 약 3,000 m가 되게 했습니다.
+    -->
+    <road name="three_kilometer_track">
+      <width>12</width>
+      <point>-501.028 159.155 0.02</point>
+      <point>0 159.155 0.02</point>
+      <point>501.028 159.155 0.02</point>
+      <point>550.209 151.365 0.02</point>
+      <point>594.577 128.759 0.02</point>
+      <point>629.787 93.549 0.02</point>
+      <point>652.393 49.181 0.02</point>
+      <point>660.183 0 0.02</point>
+      <point>652.393 -49.181 0.02</point>
+      <point>629.787 -93.549 0.02</point>
+      <point>594.577 -128.759 0.02</point>
+      <point>550.209 -151.365 0.02</point>
+      <point>501.028 -159.155 0.02</point>
+      <point>0 -159.155 0.02</point>
+      <point>-501.028 -159.155 0.02</point>
+      <point>-550.209 -151.365 0.02</point>
+      <point>-594.577 -128.759 0.02</point>
+      <point>-629.787 -93.549 0.02</point>
+      <point>-652.393 -49.181 0.02</point>
+      <point>-660.183 0 0.02</point>
+      <point>-652.393 49.181 0.02</point>
+      <point>-629.787 93.549 0.02</point>
+      <point>-594.577 128.759 0.02</point>
+      <point>-550.209 151.365 0.02</point>
+      <point>-501.028 159.155 0.02</point>
+      <material>
+        <script>
+          <uri>file://media/materials/scripts/gazebo.material</uri>
+          <name>Gazebo/Black</name>
+        </script>
+      </material>
+    </road>
+
+    <!-- 검은 도로 가운데에 흰색 중앙 차선을 표시합니다. -->
+    <road name="center_lane">
+      <width>0.18</width>
+      <point>-501.028 159.155 0.04</point>
+      <point>0 159.155 0.04</point>
+      <point>501.028 159.155 0.04</point>
+      <point>550.209 151.365 0.04</point>
+      <point>594.577 128.759 0.04</point>
+      <point>629.787 93.549 0.04</point>
+      <point>652.393 49.181 0.04</point>
+      <point>660.183 0 0.04</point>
+      <point>652.393 -49.181 0.04</point>
+      <point>629.787 -93.549 0.04</point>
+      <point>594.577 -128.759 0.04</point>
+      <point>550.209 -151.365 0.04</point>
+      <point>501.028 -159.155 0.04</point>
+      <point>0 -159.155 0.04</point>
+      <point>-501.028 -159.155 0.04</point>
+      <point>-550.209 -151.365 0.04</point>
+      <point>-594.577 -128.759 0.04</point>
+      <point>-629.787 -93.549 0.04</point>
+      <point>-652.393 -49.181 0.04</point>
+      <point>-660.183 0 0.04</point>
+      <point>-652.393 49.181 0.04</point>
+      <point>-629.787 93.549 0.04</point>
+      <point>-594.577 128.759 0.04</point>
+      <point>-550.209 151.365 0.04</point>
+      <point>-501.028 159.155 0.04</point>
+      <material>
+        <script>
+          <uri>file://media/materials/scripts/gazebo.material</uri>
+          <name>Gazebo/White</name>
+        </script>
+      </material>
+    </road>
+
+    <!-- /cmd_vel 명령으로 움직이는 파란색 차량 한 대입니다. -->
+    <model name="simple_vehicle">
+      <!-- 차량을 출발선 뒤쪽의 오른쪽 차선에 배치합니다. -->
+      <pose>-465 156.5 0 0 0 0</pose>
+
+      <!-- 파란색 차체입니다. -->
+      <link name="chassis">
+        <pose>0 0 0.65 0 0 0</pose>
+        <inertial>
+          <mass>80</mass>
+          <inertia>
+            <ixx>20</ixx><iyy>40</iyy><izz>45</izz>
+            <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name="collision">
+          <geometry><box><size>3.2 1.6 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.2 1.6 0.6</size></box></geometry>
+          <material><ambient>0.05 0.2 0.9 1</ambient><diffuse>0.05 0.2 0.9 1</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- 차량 왼쪽을 움직이는 구동 바퀴입니다. -->
+      <link name="left_wheel">
+        <pose>0 0.9 0.42 1.5708 0 0</pose>
+        <inertial><mass>5</mass><inertia><ixx>0.4</ixx><iyy>0.4</iyy><izz>0.4</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><cylinder><radius>0.4</radius><length>0.25</length></cylinder></geometry><surface><friction><ode><mu>2</mu><mu2>2</mu2></ode></friction></surface></collision>
+        <visual name="visual"><geometry><cylinder><radius>0.4</radius><length>0.25</length></cylinder></geometry><material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      </link>
+
+      <!-- 차량 오른쪽을 움직이는 구동 바퀴입니다. -->
+      <link name="right_wheel">
+        <pose>0 -0.9 0.42 1.5708 0 0</pose>
+        <inertial><mass>5</mass><inertia><ixx>0.4</ixx><iyy>0.4</iyy><izz>0.4</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><cylinder><radius>0.4</radius><length>0.25</length></cylinder></geometry><surface><friction><ode><mu>2</mu><mu2>2</mu2></ode></friction></surface></collision>
+        <visual name="visual"><geometry><cylinder><radius>0.4</radius><length>0.25</length></cylinder></geometry><material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></visual>
+      </link>
+
+      <!-- 차체 앞뒤를 받치면서 자유롭게 회전하는 보조 바퀴입니다. -->
+      <link name="front_caster">
+        <pose>1.15 0 0.25 0 0 0</pose>
+        <inertial><mass>2</mass><inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.25</radius></sphere></geometry><surface><friction><ode><mu>0.05</mu><mu2>0.05</mu2></ode></friction></surface></collision>
+        <visual name="visual"><geometry><sphere><radius>0.25</radius></sphere></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+      </link>
+      <link name="rear_caster">
+        <pose>-1.15 0 0.25 0 0 0</pose>
+        <inertial><mass>2</mass><inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="collision"><geometry><sphere><radius>0.25</radius></sphere></geometry><surface><friction><ode><mu>0.05</mu><mu2>0.05</mu2></ode></friction></surface></collision>
+        <visual name="visual"><geometry><sphere><radius>0.25</radius></sphere></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+      </link>
+
+      <!-- 차체와 왼쪽 바퀴를 회전 관절로 연결합니다. -->
+      <joint name="left_wheel_joint" type="revolute">
+        <parent>chassis</parent><child>left_wheel</child>
+        <axis><xyz>0 1 0</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis>
+      </joint>
+
+      <!-- 차체와 오른쪽 바퀴를 회전 관절로 연결합니다. -->
+      <joint name="right_wheel_joint" type="revolute">
+        <parent>chassis</parent><child>right_wheel</child>
+        <axis><xyz>0 1 0</xyz><limit><lower>-1e16</lower><upper>1e16</upper></limit></axis>
+      </joint>
+
+      <!-- 보조 바퀴는 모든 방향으로 회전할 수 있도록 연결합니다. -->
+      <joint name="front_caster_joint" type="ball"><parent>chassis</parent><child>front_caster</child></joint>
+      <joint name="rear_caster_joint" type="ball"><parent>chassis</parent><child>rear_caster</child></joint>
+
+      <!-- /cmd_vel을 받아 좌우 바퀴 속도로 바꾸는 Gazebo ROS 플러그인입니다. -->
+      <plugin name="vehicle_diff_drive" filename="libgazebo_ros_diff_drive.so">
+        <ros><remapping>cmd_vel:=/cmd_vel</remapping><remapping>odom:=/vehicle/odom</remapping></ros>
+        <update_rate>50</update_rate>
+        <left_joint>left_wheel_joint</left_joint>
+        <right_joint>right_wheel_joint</right_joint>
+        <wheel_separation>1.8</wheel_separation>
+        <wheel_diameter>0.8</wheel_diameter>
+        <max_wheel_torque>120</max_wheel_torque>
+        <max_wheel_acceleration>2.0</max_wheel_acceleration>
+        <publish_odom>true</publish_odom>
+        <publish_odom_tf>true</publish_odom_tf>
+        <odometry_frame>odom</odometry_frame>
+        <robot_base_frame>chassis</robot_base_frame>
+      </plugin>
+    </model>
+
+    <!-- 출발점 앞에 흰색 정지선을 표시합니다. -->
+    <model name="start_stop_line">
+      <static>true</static>
+      <pose>-450 159.155 0.031 0 0 0</pose>
+      <link name="line_link">
+        <visual name="line_visual">
+          <geometry><box><size>0.6 12 0.02</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 위쪽 직선 한쪽 차선에 놓인 주황색 장애물입니다. -->
+    <model name="obstacle_top_left_lane">
+      <static>true</static>
+      <pose>-200 157.155 0.75 0 0 0</pose>
+      <link name="body">
+        <collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3 2 1.5</size></box></geometry>
+          <material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 위쪽 직선 반대 차선에 놓인 빨간색 장애물입니다. -->
+    <model name="obstacle_top_right_lane">
+      <static>true</static>
+      <pose>250 161.155 0.75 0 0 0</pose>
+      <link name="body">
+        <collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3 2 1.5</size></box></geometry>
+          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 오른쪽 곡선 한쪽에 놓인 주황색 장애물입니다. -->
+    <model name="obstacle_right_curve">
+      <static>true</static>
+      <pose>658.183 0 0.75 0 0 1.5708</pose>
+      <link name="body">
+        <collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3 2 1.5</size></box></geometry>
+          <material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 아래쪽 직선 한쪽에 놓인 빨간색 장애물입니다. -->
+    <model name="obstacle_bottom">
+      <static>true</static>
+      <pose>0 -157.155 0.75 0 0 0</pose>
+      <link name="body">
+        <collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3 2 1.5</size></box></geometry>
+          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 왼쪽 곡선 한쪽에 놓인 주황색 장애물입니다. -->
+    <model name="obstacle_left_curve">
+      <static>true</static>
+      <pose>-658.183 0 0.75 0 0 1.5708</pose>
+      <link name="body">
+        <collision name="collision"><geometry><box><size>3 2 1.5</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3 2 1.5</size></box></geometry>
+          <material><ambient>1 0.25 0 1</ambient><diffuse>1 0.25 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 처음 열었을 때 트랙 전체가 보이는 카메라 위치입니다. -->
+    <gui fullscreen="0">
+      <camera name="overview_camera">
+        <pose>0 -950 1150 0 0.85 1.5708</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>

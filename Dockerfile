@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     nano \
     python3-pip \
     python3-colcon-common-extensions \
+    qtbase5-dev \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-cv-bridge \
     ros-humble-rmw-cyclonedds-cpp \

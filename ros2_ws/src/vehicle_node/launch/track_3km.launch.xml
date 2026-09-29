@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- 최적화된 3 km 트랙의 Gazebo 서버와 화면을 함께 실행합니다. -->
+<launch>
+  <!-- vehicle_node 패키지에 설치된 월드 파일 위치를 저장합니다. -->
+  <let name="world_file" value="$(find-pkg-share vehicle_node)/worlds/track_3km_optimized.world"/>
+
+  <!-- C++ Vehicle Node를 실행하여 /cmd_vel 수신 내용을 확인합니다. -->
+  <node pkg="vehicle_node" exec="vehicle_node" name="vehicle_node" output="screen"/>
+
+  <!-- Gazebo 물리 서버를 시작하고 3 km 트랙을 불러옵니다. -->
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzserver.launch.py">
+    <arg name="world" value="$(var world_file)"/>
+    <arg name="pause" value="false"/>
+  </include>
+
+  <!-- 사용자가 차량과 도로를 볼 수 있도록 Gazebo GUI를 시작합니다. -->
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzclient.launch.py"/>
+</launch>
