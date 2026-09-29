@@ -41,10 +41,19 @@ Windows에서는 X11 GUI가 바로 표시되지 않을 수 있으므로 WSL2 또
 
 ### 담당 B: Vision / Raspberry Pi
 
-`.env`의 `VISION_CAMERA_DEVICE`를 실제 카메라 경로로 설정한 뒤 실행합니다.
+Raspberry Pi(arm64)에서는 공용 `Dockerfile`의 베이스 이미지(`osrf/ros:humble-desktop`)가 arm64를 지원하지 않아 빌드가 실패합니다. Pi 전용 `Dockerfile.pi`를 사용하도록 `docker-compose.pi.yml`을 함께 지정합니다.
+
+카메라 없이 개발 환경만 실행합니다.
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.vision.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d --build
+docker exec -it ros2_hil_env bash
+```
+
+카메라를 연결할 때는 `.env`의 `VISION_CAMERA_DEVICE`를 실제 카메라 경로로 설정한 뒤 `docker-compose.vision.yml`을 추가합니다.
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.pi.yml -f docker-compose.vision.yml up -d --build
 docker exec -it ros2_hil_env bash
 ```
 
