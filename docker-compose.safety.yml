@@ -1,0 +1,5 @@
+services:
+  ros2_env:
+    # C(Safety) 담당자의 STM32 시리얼 장치만 컨테이너에 연결
+    devices:
+      - "${SAFETY_SERIAL_DEVICE:-/dev/ttyUSB0}:/dev/ttyUSB0"
