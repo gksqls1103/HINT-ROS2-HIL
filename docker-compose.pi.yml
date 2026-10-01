@@ -1,0 +1,6 @@
+services:
+  ros2_env:
+    # Raspberry Pi(arm64)용 경량 이미지 (Gazebo 제외)
+    build:
+      context: .
+      dockerfile: Dockerfile.pi
