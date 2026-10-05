@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<!-- 외부 리소스 다운로드 없이 실행하는 제어 실습용 도로 월드입니다. -->
+<sdf version="1.8"><world name="vehicle_world">
+<physics name="physics" type="ignored"><max_step_size>0.001</max_step_size><real_time_factor>1</real_time_factor></physics>
+<plugin filename="ignition-gazebo-physics-system" name="ignition::gazebo::systems::Physics"/>
+<plugin filename="ignition-gazebo-user-commands-system" name="ignition::gazebo::systems::UserCommands"/>
+<plugin filename="ignition-gazebo-scene-broadcaster-system" name="ignition::gazebo::systems::SceneBroadcaster"/>
+<light name="sun" type="directional"><pose>0 0 10 0 0 0</pose><diffuse>1 1 1 1</diffuse><specular>0.2 0.2 0.2 1</specular><direction>-0.5 0.1 -0.9</direction><cast_shadows>true</cast_shadows></light>
+<model name="ground"><static>true</static><link name="ground"><collision name="ground"><geometry><plane><normal>0 0 1</normal><size>50 50</size></plane></geometry></collision><visual name="ground_visual"><geometry><plane><normal>0 0 1</normal><size>50 50</size></plane></geometry><material><ambient>0.3 0.5 0.3 1</ambient><diffuse>0.3 0.5 0.3 1</diffuse></material></visual></link></model>
+<!-- 직선 도로, 교차로, 정지선과 충돌 가능한 장애물입니다. -->
+<model name="straight"><static>true</static><pose>5 0 0.005 0 0 0</pose><link name="link"><visual name="visual"><geometry><box><size>14 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="intersection"><static>true</static><pose>6 0 0.005 0 0 0</pose><link name="link"><visual name="visual"><geometry><box><size>3 12 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="stop_line"><static>true</static><pose>4 0 0.02 0 0 0</pose><link name="link"><visual name="visual"><geometry><box><size>0.15 3 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link></model>
+<model name="obstacle"><static>true</static><pose>10 0 0.5 0 0 0</pose><link name="link"><collision name="collision"><geometry><box><size>0.7 0.7 1</size></box></geometry></collision><visual name="visual"><geometry><box><size>0.7 0.7 1</size></box></geometry><material><ambient>0.9 0.2 0.1 1</ambient><diffuse>0.9 0.2 0.1 1</diffuse></material></visual></link></model>
+<!-- 곡선 도로는 겹치는 짧은 도로 조각으로 구성합니다. -->
+<!-- 시연용 주차 구역: 중심 (1.3, 1.8), 크기 1.4 x 0.9 m입니다. -->
+<model name="parking_pad"><static>true</static><pose>1.3 1.8 0.012 0 0 0</pose><link name="link"><visual name="pad"><geometry><box><size>1.4 0.9 0.01</size></box></geometry><material><ambient>0.1 0.35 0.4 1</ambient><diffuse>0.1 0.35 0.4 1</diffuse></material></visual></link></model>
+<model name="parking_left"><static>true</static><pose>0.6 1.8 0.022 0 0 0</pose><link name="link"><visual name="line"><geometry><box><size>0.04 0.9 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link></model>
+<model name="parking_right"><static>true</static><pose>2.0 1.8 0.022 0 0 0</pose><link name="link"><visual name="line"><geometry><box><size>0.04 0.9 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link></model>
+<model name="parking_top"><static>true</static><pose>1.3 2.25 0.022 0 0 0</pose><link name="link"><visual name="line"><geometry><box><size>1.4 0.04 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link></model>
+<model name="parking_bottom"><static>true</static><pose>1.3 1.35 0.022 0 0 0</pose><link name="link"><visual name="line"><geometry><box><size>1.4 0.04 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link></model>
+<model name="curve_0"><static>true</static><pose>12 0 0.005 0 0 0</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_1"><static>true</static><pose>12.348622970990633 0.01522120763301782 0.005 0 0 0.08726646259971647</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_2"><static>true</static><pose>12.694592710667722 0.06076898795116792 0.005 0 0 0.17453292519943295</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_3"><static>true</static><pose>13.035276180410083 0.13629669484372675 0.005 0 0 0.2617993877991494</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_4"><static>true</static><pose>13.368080573302676 0.2412295168563663 0.005 0 0 0.3490658503988659</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_5"><static>true</static><pose>13.690473046962797 0.37476885185340025 0.005 0 0 0.4363323129985824</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_6"><static>true</static><pose>14 0.5358983848622452 0.005 0 0 0.5235987755982988</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_7"><static>true</static><pose>14.294305745404184 0.7233918228440328 0.005 0 0 0.6108652381980153</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_8"><static>true</static><pose>14.571150438746157 0.935822227524088 0.005 0 0 0.6981317007977318</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_9"><static>true</static><pose>14.82842712474619 1.1715728752538097 0.005 0 0 0.7853981633974483</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_10"><static>true</static><pose>15.064177772475912 1.4288495612538425 0.005 0 0 0.8726646259971648</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_11"><static>true</static><pose>15.276608177155968 1.7056942545958154 0.005 0 0 0.9599310885968811</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_12"><static>true</static><pose>15.464101615137753 1.9999999999999996 0.005 0 0 1.0471975511965976</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_13"><static>true</static><pose>15.6252311481466 2.309526953037202 0.005 0 0 1.1344640137963142</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_14"><static>true</static><pose>15.758770483143634 2.6319194266973245 0.005 0 0 1.2217304763960306</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_15"><static>true</static><pose>15.863703305156273 2.964723819589916 0.005 0 0 1.308996938995747</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_16"><static>true</static><pose>15.939231012048833 3.3054072893322783 0.005 0 0 1.3962634015954636</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_17"><static>true</static><pose>15.984778792366981 3.6513770290093674 0.005 0 0 1.4835298641951802</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<model name="curve_18"><static>true</static><pose>16 3.9999999999999996 0.005 0 0 1.5707963267948966</pose><link name="link"><visual name="visual"><geometry><box><size>1.2 3 0.01</size></box></geometry><material><ambient>0.12 0.12 0.12 1</ambient><diffuse>0.12 0.12 0.12 1</diffuse></material></visual></link></model>
+<!-- 차량 원점은 시작점입니다. x 전방, y 좌측, z 위쪽입니다. -->
+<model name="vehicle"><pose>0 0 0.21 0 0 0</pose>
+<link name="base_link">
+<inertial><mass>5</mass><inertia><ixx>0.1</ixx><iyy>0.3</iyy><izz>0.3</izz></inertia></inertial>
+<collision name="body"><pose>0 0 0.12 0 0 0</pose><geometry><box><size>0.8 0.45 0.2</size></box></geometry></collision>
+<visual name="body_visual"><pose>0 0 0.12 0 0 0</pose><geometry><box><size>0.8 0.45 0.2</size></box></geometry><material><ambient>0.1 0.3 0.9 1</ambient><diffuse>0.1 0.3 0.9 1</diffuse></material></visual>
+</link>
+<!-- 앞/뒤, 왼쪽/오른쪽의 실제 구동 바퀴 4개입니다. 캐스터는 사용하지 않습니다. -->
+<!-- front_left_wheel: 반지름 0.2 m, 폭 0.08 m, 회전축은 차체 y 방향입니다. -->
+<link name="front_left_wheel">
+  <pose>0.28 0.28 0 1.57079632679 0 0</pose>
+  <inertial><mass>0.5</mass><inertia><ixx>0.005267</ixx><iyy>0.005267</iyy><izz>0.01</izz></inertia></inertial>
+  <collision name="wheel_collision">
+    <!-- 외형 폭은 8 cm, 접지부 충돌 폭은 2 cm로 근사해 모서리 접촉 오차를 줄입니다. -->
+    <geometry><cylinder><radius>0.2</radius><length>0.02</length></cylinder></geometry>
+    <!-- 타이어의 진행 방향 접지와 회전에 필요한 횡방향 미끄러짐을 구분합니다. -->
+    <surface><friction><ode><mu>0.01</mu><mu2>1.0</mu2><fdir1>0 0 1</fdir1></ode></friction></surface>
+  </collision>
+  <visual name="wheel_visual">
+    <geometry><cylinder><radius>0.2</radius><length>0.08</length></cylinder></geometry>
+    <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material>
+  </visual>
+</link>
+<joint name="front_left_wheel_joint" type="revolute">
+  <parent>base_link</parent><child>front_left_wheel</child>
+  <axis><xyz expressed_in="__model__">0 1 0</xyz></axis>
+</joint>
+<!-- rear_left_wheel: 반지름 0.2 m, 폭 0.08 m, 회전축은 차체 y 방향입니다. -->
+<link name="rear_left_wheel">
+  <pose>-0.28 0.28 0 1.57079632679 0 0</pose>
+  <inertial><mass>0.5</mass><inertia><ixx>0.005267</ixx><iyy>0.005267</iyy><izz>0.01</izz></inertia></inertial>
+  <collision name="wheel_collision">
+    <!-- 외형 폭은 8 cm, 접지부 충돌 폭은 2 cm로 근사해 모서리 접촉 오차를 줄입니다. -->
+    <geometry><cylinder><radius>0.2</radius><length>0.02</length></cylinder></geometry>
+    <!-- 타이어의 진행 방향 접지와 회전에 필요한 횡방향 미끄러짐을 구분합니다. -->
+    <surface><friction><ode><mu>0.01</mu><mu2>1.0</mu2><fdir1>0 0 1</fdir1></ode></friction></surface>
+  </collision>
+  <visual name="wheel_visual">
+    <geometry><cylinder><radius>0.2</radius><length>0.08</length></cylinder></geometry>
+    <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material>
+  </visual>
+</link>
+<joint name="rear_left_wheel_joint" type="revolute">
+  <parent>base_link</parent><child>rear_left_wheel</child>
+  <axis><xyz expressed_in="__model__">0 1 0</xyz></axis>
+</joint>
+<!-- front_right_wheel: 반지름 0.2 m, 폭 0.08 m, 회전축은 차체 y 방향입니다. -->
+<link name="front_right_wheel">
+  <pose>0.28 -0.28 0 1.57079632679 0 0</pose>
+  <inertial><mass>0.5</mass><inertia><ixx>0.005267</ixx><iyy>0.005267</iyy><izz>0.01</izz></inertia></inertial>
+  <collision name="wheel_collision">
+    <!-- 외형 폭은 8 cm, 접지부 충돌 폭은 2 cm로 근사해 모서리 접촉 오차를 줄입니다. -->
+    <geometry><cylinder><radius>0.2</radius><length>0.02</length></cylinder></geometry>
+    <!-- 타이어의 진행 방향 접지와 회전에 필요한 횡방향 미끄러짐을 구분합니다. -->
+    <surface><friction><ode><mu>0.01</mu><mu2>1.0</mu2><fdir1>0 0 1</fdir1></ode></friction></surface>
+  </collision>
+  <visual name="wheel_visual">
+    <geometry><cylinder><radius>0.2</radius><length>0.08</length></cylinder></geometry>
+    <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material>
+  </visual>
+</link>
+<joint name="front_right_wheel_joint" type="revolute">
+  <parent>base_link</parent><child>front_right_wheel</child>
+  <axis><xyz expressed_in="__model__">0 1 0</xyz></axis>
+</joint>
+<!-- rear_right_wheel: 반지름 0.2 m, 폭 0.08 m, 회전축은 차체 y 방향입니다. -->
+<link name="rear_right_wheel">
+  <pose>-0.28 -0.28 0 1.57079632679 0 0</pose>
+  <inertial><mass>0.5</mass><inertia><ixx>0.005267</ixx><iyy>0.005267</iyy><izz>0.01</izz></inertia></inertial>
+  <collision name="wheel_collision">
+    <!-- 외형 폭은 8 cm, 접지부 충돌 폭은 2 cm로 근사해 모서리 접촉 오차를 줄입니다. -->
+    <geometry><cylinder><radius>0.2</radius><length>0.02</length></cylinder></geometry>
+    <!-- 타이어의 진행 방향 접지와 회전에 필요한 횡방향 미끄러짐을 구분합니다. -->
+    <surface><friction><ode><mu>0.01</mu><mu2>1.0</mu2><fdir1>0 0 1</fdir1></ode></friction></surface>
+  </collision>
+  <visual name="wheel_visual">
+    <geometry><cylinder><radius>0.2</radius><length>0.08</length></cylinder></geometry>
+    <material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material>
+  </visual>
+</link>
+<joint name="rear_right_wheel_joint" type="revolute">
+  <parent>base_link</parent><child>rear_right_wheel</child>
+  <axis><xyz expressed_in="__model__">0 1 0</xyz></axis>
+</joint>
+<!-- 차동구동은 Twist 명령을 좌우 바퀴 속도로 변환합니다. -->
+<plugin filename="ignition-gazebo-diff-drive-system" name="ignition::gazebo::systems::DiffDrive">
+<!-- 같은 쪽 앞뒤 바퀴에 동일한 속도를 적용하는 4륜 차동구동입니다. -->
+<left_joint>front_left_wheel_joint</left_joint><left_joint>rear_left_wheel_joint</left_joint>
+<right_joint>front_right_wheel_joint</right_joint><right_joint>rear_right_wheel_joint</right_joint>
+<wheel_separation>0.56</wheel_separation><wheel_radius>0.2</wheel_radius>
+<topic>/model/vehicle/cmd_vel</topic><odom_topic>/model/vehicle/odometry</odom_topic>
+<odom_publish_frequency>20</odom_publish_frequency><frame_id>odom</frame_id><child_frame_id>base_link</child_frame_id>
+</plugin>
+<!-- 바퀴가 헛도는 경우를 검출하기 위한 검증용 월드 위치 피드백입니다. -->
+<plugin filename="ignition-gazebo-odometry-publisher-system" name="ignition::gazebo::systems::OdometryPublisher">
+  <odom_topic>/model/vehicle/ground_truth</odom_topic>
+  <odom_frame>world</odom_frame><robot_base_frame>base_link</robot_base_frame>
+  <odom_publish_frequency>20</odom_publish_frequency><dimensions>2</dimensions>
+</plugin>
+</model></world></sdf>

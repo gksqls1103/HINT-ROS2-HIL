@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- GUI와 RViz를 끄면 서버 검증용 headless 실행이 가능합니다. -->
+  <arg name="gui" default="true"/>
+  <arg name="rviz" default="true"/>
+  <let name="world" value="$(find-pkg-share vehicle_node)/worlds/vehicle.sdf"/>
+  <executable cmd="ign gazebo -r $(var world)" output="screen" if="$(var gui)"/>
+  <executable cmd="ign gazebo -r -s $(var world)" output="screen" unless="$(var gui)"/>
+  <!-- ]는 ROS -> Gazebo, [는 Gazebo -> ROS 단방향 연결입니다. -->
+  <node pkg="ros_gz_bridge" exec="parameter_bridge" name="vehicle_bridge" output="screen"
+        args="/model/vehicle/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist /model/vehicle/odometry@nav_msgs/msg/Odometry[ignition.msgs.Odometry /model/vehicle/ground_truth@nav_msgs/msg/Odometry[ignition.msgs.Odometry /clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock /world/vehicle_world/control@ros_gz_interfaces/srv/ControlWorld">
+    <remap from="/model/vehicle/cmd_vel" to="/vehicle/internal/cmd_vel"/>
+    <remap from="/model/vehicle/odometry" to="/vehicle/internal/odometry"/>
+    <!-- 검증 도구는 바퀴 odometry와 월드 위치를 각각 검사합니다. -->
+    <remap from="/model/vehicle/ground_truth" to="/vehicle/internal/ground_truth"/>
+  </node>
+  <!-- 외부 토픽 계약은 코드에 고정하고 제어 제한값만 파라미터로 둡니다. -->
+  <node pkg="vehicle_node" exec="vehicle_node" output="screen">
+    <param name="use_sim_time" value="true"/>
+    <param name="command_timeout" value="0.5"/>
+    <param name="feedback_timeout" value="0.5"/>
+    <param name="max_linear_speed" value="2.0"/>
+    <param name="max_angular_speed" value="1.5"/>
+  </node>
+  <node pkg="rviz2" exec="rviz2" args="-d $(find-pkg-share vehicle_node)/config/vehicle.rviz" if="$(var rviz)">
+    <param name="use_sim_time" value="true"/>
+  </node>
+</launch>
