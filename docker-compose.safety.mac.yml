@@ -1,0 +1,5 @@
+services:
+  ros2_env:
+    # Mac은 USB 장치를 컨테이너에 직접 연결할 수 없어, 호스트의 socat 중계(TCP)에 접속
+    environment:
+      - SAFETY_SERIAL_URL=${SAFETY_SERIAL_URL:-socket://host.docker.internal:9000}
