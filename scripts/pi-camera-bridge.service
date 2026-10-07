@@ -1,0 +1,13 @@
+[Unit]
+Description=Raspberry Pi CSI camera -> v4l2loopback bridge (/dev/video10)
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/sbin/modprobe v4l2loopback video_nr=10 card_label=picam exclusive_caps=1
+ExecStart=/usr/local/bin/pi_camera_bridge.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

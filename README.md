@@ -41,14 +41,45 @@ Windows에서는 X11 GUI가 바로 표시되지 않을 수 있으므로 WSL2 또
 
 ### 담당 B: Vision / Raspberry Pi
 
-`.env`의 `VISION_CAMERA_DEVICE`를 실제 카메라 경로로 설정한 뒤 실행합니다.
+Raspberry Pi(arm64)에서는 공용 `Dockerfile`의 베이스 이미지(`osrf/ros:humble-desktop`)가 arm64를 지원하지 않아 빌드가 실패합니다. Pi 전용 `Dockerfile.pi`를 사용하도록 `docker-compose.pi.yml`을 함께 지정합니다.
+
+카메라 없이 개발 환경만 실행합니다.
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.vision.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d --build
 docker exec -it ros2_hil_env bash
 ```
 
-카메라 경로는 `ls /dev/video*`로 확인합니다.
+#### CSI 카메라 연결 (Raspberry Pi 5)
+
+Pi 5의 CSI 카메라는 libcamera를 거쳐야 영상이 나오기 때문에, `/dev/video*`를 컨테이너에 직접 연결하면 OpenCV가 영상을 읽지 못합니다. 호스트에서 가상 웹캠(`/dev/video10`)을 만들어 카메라 영상을 전달하고, 컨테이너는 이를 일반 웹캠처럼 사용합니다.
+
+최초 1회 Pi 호스트에서 설치합니다. 이후에는 Pi가 켜질 때마다 자동으로 실행됩니다.
+
+```bash
+sudo apt install -y rpicam-apps-lite linux-headers-rpi-2712 v4l2loopback-dkms ffmpeg
+sudo install -m 755 scripts/pi_camera_bridge.sh /usr/local/bin/
+sudo install -m 644 scripts/pi-camera-bridge.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now pi-camera-bridge
+```
+
+동작 상태는 `systemctl status pi-camera-bridge`로 확인합니다.
+
+`.env`에서 카메라 경로를 가상 웹캠으로 지정합니다.
+
+```
+VISION_CAMERA_DEVICE=/dev/video10
+```
+
+카메라를 연결해 실행합니다. 컨테이너 안에서는 `/dev/video0`으로 보이며, OpenCV에서 `cv2.VideoCapture(0)`으로 사용합니다.
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.pi.yml -f docker-compose.vision.yml up -d --build
+docker exec -it ros2_hil_env bash
+```
+
+USB 카메라를 사용하는 경우 위 설치 과정 없이, `ls /dev/video*`로 확인한 경로를 `.env`에 지정하면 됩니다.
 
 ### 담당 C: Safety / STM32 Bridge
 
