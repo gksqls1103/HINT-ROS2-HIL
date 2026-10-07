@@ -1,0 +1,9 @@
+services:
+  ros2_env:
+    # A(Vehicle) 담당자의 Gazebo GUI 출력을 위한 호스트 X11 소켓 연결
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    # GUI 출력을 위한 환경변수
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1

@@ -1,0 +1,18 @@
+services:
+  ros2_env:
+    build: .
+    container_name: ros2_hil_env
+    # 호스트의 디렉토리를 컨테이너에 동기화
+    volumes:
+      - ./ros2_ws/src:/ros2_ws/src
+    # ROS2 노드 간 통신을 위한 공통 환경변수
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
+      - ROS_LOCALHOST_ONLY=${ROS_LOCALHOST_ONLY:-0}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
+    # ROS2 노드 간 통신을 위해 호스트 네트워크 사용
+    network_mode: host
+    # 컨테이너를 백그라운드에서 유지
+    stdin_open: true 
+    tty: true        
+    command: /bin/bash
