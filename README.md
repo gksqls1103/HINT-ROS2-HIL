@@ -33,11 +33,18 @@
 실제 카메라와 STM32를 연결하지 않고 Gazebo GUI만 추가합니다.
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.vehicle.yml up -d --build
-docker exec -it ros2_hil_env bash
+sh run_vehicle.sh
 ```
 
 Windows에서는 X11 GUI가 바로 표시되지 않을 수 있으므로 WSL2 또는 Ubuntu 환경을 권장합니다.
+
+Vehicle 스크립트는 컨테이너 준비·C++ 빌드·Gazebo/RViz 실행·전진/후진/좌우 회전/파킹 시연을 자동 실행합니다. 종료는 Ctrl+C입니다. 자세한 안내는 [Vehicle 실행 문서](vehicle/README.md)를 참고하세요.
+
+주행 시연 없이 Gazebo 월드·ROS bridge·Vehicle 노드의 발행·구독만 실행하려면 다음 명령을 사용합니다. RViz는 시작하지 않습니다. GUI 없이 실행하려면 `--headless`를 추가하세요.
+
+```bash
+sh run_gazebo.sh
+```
 
 ### 담당 B: Vision / Raspberry Pi
 
