@@ -1,0 +1,52 @@
+camera_publisher:
+  ros__parameters:
+    # 가상 웹캠: Pi 호스트 /dev/video10 → 컨테이너 /dev/video0 (docker-compose.vision.yml)
+    camera_device: "/dev/video0"
+    camera_width: 640
+    camera_height: 480
+    camera_fourcc: ""
+    image_topic: "/camera/image_raw"
+    publish_rate: 15.0
+
+vision_node:
+  ros__parameters:
+    # 입력: camera_publisher가 발행하는 카메라 topic
+    input_mode: "topic"                 # "topic" | "device"
+    image_topic: "/camera/image_raw"
+    image_compressed: false             # CompressedImage를 구독할 거면 true + topic 이름 .../compressed
+
+    # device 모드(예비)에서만 사용
+    camera_device: "/dev/video0"
+    camera_width: 640
+    camera_height: 480
+    camera_fourcc: ""
+
+    # 모델
+    model_path: ""             # 비우면 패키지에 설치된 models/yolov8n_320.onnx
+    onnx_threads: 2             # 4면 카메라 발행과 CPU 경쟁 (Pi 5: 2 → 카메라 15Hz, 추론 ~65ms)
+
+    # 발행 / 판단
+    publish_rate: 10.0
+    conf_thres: 0.35
+    nms_thres: 0.45
+    min_area_ratio: 0.002      # 화면 대비 bbox 면적. 휴대폰이 멀면 무시하도록 키운다
+    yellow_as: "STOP"          # STOP 또는 NONE (D와 합의)
+    debounce_window: 5
+    debounce_votes: 3
+
+    # Fault
+    frame_timeout: 1.0
+    min_fps: 2.0
+
+    # HSV (tools/vision_test.py --calib 결과로 교체)
+    hsv_red1: [0, 10]
+    hsv_red2: [160, 179]
+    hsv_yellow: [15, 35]
+    hsv_green: [40, 95]
+    hsv_s_min: 80
+    hsv_v_min: 120
+    hsv_min_ratio: 0.04
+
+    # 디버그 이미지 (노트북 rqt_image_view 확인용, 평소엔 false)
+    publish_debug_image: false
+    debug_image_rate: 2.0
