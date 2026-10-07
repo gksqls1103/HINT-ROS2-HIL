@@ -40,6 +40,12 @@ Windows에서는 X11 GUI가 바로 표시되지 않을 수 있으므로 WSL2 또
 
 Vehicle 스크립트는 컨테이너 준비·C++ 빌드·Gazebo/RViz 실행·전진/후진/좌우 회전/파킹 시연을 자동 실행합니다. 종료는 Ctrl+C입니다. 자세한 안내는 [Vehicle 실행 문서](vehicle/README.md)를 참고하세요.
 
+주행 시연 없이 Gazebo 월드·ROS bridge·Vehicle 노드의 발행·구독만 실행하려면 다음 명령을 사용합니다. RViz는 시작하지 않습니다. GUI 없이 실행하려면 `--headless`를 추가하세요.
+
+```bash
+sh run_gazebo.sh
+```
+
 ### 담당 B: Vision / Raspberry Pi
 
 Raspberry Pi(arm64)에서는 공용 `Dockerfile`의 베이스 이미지(`osrf/ros:humble-desktop`)가 arm64를 지원하지 않아 빌드가 실패합니다. Pi 전용 `Dockerfile.pi`를 사용하도록 `docker-compose.pi.yml`을 함께 지정합니다.

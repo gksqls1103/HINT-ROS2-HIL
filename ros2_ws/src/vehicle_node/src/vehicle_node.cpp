@@ -16,6 +16,7 @@ class VehicleNode : public rclcpp::Node
 public:
   VehicleNode() : Node("vehicle_node")
   {
+   
     // 기본 제한값: 속도 m/s, 회전속도 rad/s, 타임아웃 초.
     command_timeout_ = declare_parameter<double>("command_timeout", 0.5);
     feedback_timeout_ = declare_parameter<double>("feedback_timeout", 0.5);
@@ -25,7 +26,7 @@ public:
         !positive(max_linear_speed_) || !positive(max_angular_speed_)) {
       throw std::invalid_argument("Limits and timeouts must be finite and positive");
     }
-
+    
     // 외부 계약: Reliable / Volatile / Keep Last 10.
     rclcpp::QoS qos(10);
     qos.reliable();
@@ -46,6 +47,7 @@ public:
       "/vehicle/internal/odometry", feedback_qos,
       std::bind(&VehicleNode::onOdometry, this, std::placeholders::_1));
     tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(*this);
+    
 
     // 실제 시간 타이머: Gazebo가 일시정지해도 명령 단절 검사를 수행합니다.
     timer_ = create_wall_timer(std::chrono::milliseconds(50),
@@ -67,7 +69,6 @@ private:
     return std::isfinite(value) && value > 0.0;
   }
 
-  // 복잡한 문법 없이 속도를 최대/최소 범위로 제한합니다.
   double limit(double value, double maximum)
   {
     if (value > maximum) { return maximum; }
@@ -102,6 +103,8 @@ private:
     // 평면 차동구동 모델이므로 linear.x, angular.z만 제어합니다.
     command_.linear.x = limit(msg->linear.x, max_linear_speed_);
     command_.angular.z = limit(msg->angular.z, max_angular_speed_);
+
+
     command_time_ = std::chrono::steady_clock::now();
     have_command_ = true;
     sendCommand();  // STOP은 다음 타이머까지 기다리지 않고 전달합니다.

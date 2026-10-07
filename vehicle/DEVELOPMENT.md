@@ -11,6 +11,7 @@
 | 처음 빌드하고 실행하기 | 이 README의 1~2번 |
 | 전진·후진·좌우 회전·파킹을 화면에서 보기 | [DRIVING_DEMO.md](DRIVING_DEMO.md) |
 | 개별 명령 직접 보내기 | [COMMANDS.md](COMMANDS.md) |
+| 움직인 차량을 시작 위치로 옮기기 | 이 문서의 4번 |
 | Decision과 메시지 맞추기 | [INTERFACES.md](INTERFACES.md) |
 | 검증 결과와 측정값 확인하기 | [VALIDATION.md](VALIDATION.md) |
 
@@ -119,11 +120,32 @@ ros2 run vehicle_node vehicle_smoke_test
 
 피드백, 물리 월드 위치, 전진/후진, 감속, STOP, 좌우 회전, 제자리 회전, 속도 제한, 오류 명령, 명령/피드백 timeout 및 복구를 검사합니다. 실패하면 종료 코드 1을 반환합니다.
 
-## 4. Decision 연결
+## 4. 차량을 초기 위치로 옮기기
+
+Gazebo 월드가 실행 중인 컨테이너 터미널에서 아래 스크립트를 실행하면 차량 모델을 시작 위치 `(x=0, y=0, z=0.21 m, yaw=0)`로 옮깁니다. 차량이 움직이는 중이라면 먼저 다른 터미널에서 `/cmd_vel`을 0으로 발행하고, 다른 `/cmd_vel` 발행자는 종료하세요.
+
+```bash
+cat > /tmp/reset_vehicle_pose.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+ign service -s /world/vehicle_world/set_pose \\
+  --reqtype ignition.msgs.Pose \\
+  --reptype ignition.msgs.Boolean \\
+  --timeout 3000 \\
+  --req 'name: "vehicle", position: {x: 0, y: 0, z: 0.21}, orientation: {w: 1}'
+EOF
+chmod +x /tmp/reset_vehicle_pose.sh
+/tmp/reset_vehicle_pose.sh
+```
+
+서비스 호출 결과가 `data: true`이면 성공입니다. 위치는 `/vehicle/internal/ground_truth` 또는 Gazebo 화면에서 확인할 수 있습니다. 이 호출은 차량의 위치와 방향을 바꾸며, 차량을 정지시키는 명령은 아니므로 재설정 전에 속도 명령을 0으로 보내야 합니다.
+
+## 5. Decision 연결
 
 Decision에서 Twist를 Reliable / Volatile / Keep Last 10으로 20 Hz 발행합니다. `/vehicle/state`의 위치·실제 속도를 받아 정지 완료 및 주행 상태를 판단합니다. 인지 이벤트와 FSM은 Decision이 처리하고, Vehicle은 내려온 명령을 실행합니다. 모든 컴퓨터의 `.env`에서 ROS_DOMAIN_ID, ROS_LOCALHOST_ONLY, RMW_IMPLEMENTATION을 맞춥니다. 상세 필드와 단위는 [INTERFACES.md](INTERFACES.md)를 따릅니다.
 
-## 5. 종료·재빌드
+## 6. 종료·재빌드
 
 launch 터미널에서 Ctrl+C로 종료하고 호스트에서:
 
