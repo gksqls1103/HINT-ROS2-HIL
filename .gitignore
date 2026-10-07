@@ -9,3 +9,10 @@ ros2_ws/log/
 
 # Local Docker environment
 .env
+
+# Python
+__pycache__/
+
+# Vision 테스트 사진/결과
+ros2_ws/src/vision_pkg/test_imgs/
+ros2_ws/src/vision_pkg/result/
