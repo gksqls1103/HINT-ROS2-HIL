@@ -5,10 +5,10 @@
 호스트 터미널에서 한 줄 실행합니다.
 
 ```bash
-sh /home/lee/hint/HINT-ROS2-HIL/run_vehicle.sh
+sh /home/lee/hint/HINT-ROS2-HIL/ros2_ws/src/vehicle_node/run_vehicle.sh
 ```
 
-프로젝트 폴더에 있다면 `sh run_vehicle.sh`로 실행할 수 있습니다. 스크립트가 Docker 컨테이너, C++ 빌드, Gazebo/RViz, 주행 명령을 모두 준비합니다. 최초 빌드 후 약 28초의 시뮬레이션 시간 동안 움직입니다.
+프로젝트 폴더에 있다면 `sh ros2_ws/src/vehicle_node/run_vehicle.sh`로 실행할 수 있습니다. 스크립트가 Docker 컨테이너, C++ 빌드, Gazebo/RViz, 주행 명령을 모두 준비합니다. 최초 빌드 후 약 28초의 시뮬레이션 시간 동안 움직입니다.
 
 Docker 접근 권한, DISPLAY와 xhost가 필요합니다. 실제 Decision이나 다른 명령 발행자는 먼저 종료하세요. 시연 중에는 C++ 프로그램이 임시 Decision 역할로 `/cmd_vel`을 발행합니다.
 
@@ -17,7 +17,7 @@ Docker 접근 권한, DISPLAY와 xhost가 필요합니다. 실제 Decision이나
 GUI 없이 검사 후 자동 종료하려면:
 
 ```bash
-sh /home/lee/hint/HINT-ROS2-HIL/run_vehicle.sh --headless
+sh /home/lee/hint/HINT-ROS2-HIL/ros2_ws/src/vehicle_node/run_vehicle.sh --headless
 ```
 
 ## 2. 화면에서 확인할 순서
@@ -42,7 +42,7 @@ sh /home/lee/hint/HINT-ROS2-HIL/run_vehicle.sh --headless
 
 2026-10-05에 `driving_demo.sh`를 실제 Gazebo GUI에서 실행했습니다. 전진·후진·좌회전·우회전·후진 주차를 모두 완료했고 종료 코드 0입니다. 마지막 월드 위치는 약 x=1.365 m, y=1.861 m이며, 주차 구역 안에서 정지 조건을 통과했습니다.
 
-![시연 후 주차선 안에 정지한 Vehicle](parking-demo.png)
+
 
 ## 4. 중단과 다시 실행
 

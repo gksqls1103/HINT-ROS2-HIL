@@ -6,7 +6,7 @@ fi
 set -e -o pipefail
 
 # 스크립트 위치를 기준으로 찾으므로 어느 폴더에서 실행해도 됩니다.
-project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$project_dir"
 mode="gui"
 if [ "${1:-}" = "--headless" ]; then
@@ -49,9 +49,9 @@ echo "[1/4] Vehicle 컨테이너 준비"
 docker compose -f docker-compose.yml -f docker-compose.vehicle.yml up -d --build ros2_env
 
 # 터미널에서는 Ctrl+C가 컨테이너 실행 프로그램에도 전달되도록 TTY를 사용합니다.
-exec_options=(-i)
+exec_options=(-T)
 if [ -t 0 ] && [ -t 1 ]; then
-  exec_options=(-it)
+  exec_options=()
 fi
-docker exec "${exec_options[@]}" ros2_hil_env bash \
+docker compose -f docker-compose.yml -f docker-compose.vehicle.yml exec "${exec_options[@]}" ros2_env bash \
   /ros2_ws/src/vehicle_node/scripts/run_demo_in_container.sh "$mode"

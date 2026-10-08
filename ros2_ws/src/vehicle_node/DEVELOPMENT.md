@@ -19,14 +19,14 @@
 
 | 경로 | 내용 |
 |---|---|
-| `vehicle/` | Vehicle 전용 Dockerfile, 실행 및 인터페이스 문서 |
+| `ros2_ws/src/vehicle_node/` | Vehicle 전용 Dockerfile, 실행 및 인터페이스 문서 |
 | `ros2_ws/src/vehicle_node/` | 담당 Vehicle의 독립 ROS 패키지 |
 | `ros2_ws/src/vehicle_node/src/vehicle_node.cpp` | 한국어 주석이 있는 C++ 구독·발행 코드 |
 | `ros2_ws/src/vehicle_node/launch/vehicle.launch.xml` | Gazebo, bridge, Vehicle, RViz 통합 실행 |
 | `ros2_ws/src/vehicle_node/worlds/vehicle.sdf` | 차량, 직선/곡선 도로, 교차로, 정지선, 장애물 |
 | `ros2_ws/src/vehicle_node/config/vehicle.rviz` | RViz 위치·상태·TF 화면 |
 
-공용 Dockerfile은 그대로 두고 `docker-compose.vehicle.yml`에서 Vehicle 전용 Dockerfile을 선택합니다. Humble의 공식 대응 Gazebo는 Fortress이며 `ros-humble-ros-gz`를 설치합니다. Fortress 명령 이름은 `ign gazebo`입니다. Gazebo Classic의 `gazebo` 명령과 `gazebo_ros` 플러그인을 사용하지 않습니다.
+`docker-compose.vehicle.yml`은 루트의 공용 `Dockerfile`을 사용하며 차량 GUI 설정만 추가합니다. Humble의 공식 대응 Gazebo는 Fortress이며 `ros-humble-ros-gz`를 설치합니다. Fortress 명령 이름은 `ign gazebo`입니다. Gazebo Classic의 `gazebo` 명령과 `gazebo_ros` 플러그인을 사용하지 않습니다.
 
 ## 1. 호스트에서 컨테이너 준비
 
@@ -143,7 +143,7 @@ chmod +x /tmp/reset_vehicle_pose.sh
 
 ## 5. Decision 연결
 
-Decision에서 Twist를 Reliable / Volatile / Keep Last 10으로 20 Hz 발행합니다. `/vehicle/state`의 위치·실제 속도를 받아 정지 완료 및 주행 상태를 판단합니다. 인지 이벤트와 FSM은 Decision이 처리하고, Vehicle은 내려온 명령을 실행합니다. 모든 컴퓨터의 `.env`에서 ROS_DOMAIN_ID, ROS_LOCALHOST_ONLY, RMW_IMPLEMENTATION을 맞춥니다. 상세 필드와 단위는 [INTERFACES.md](INTERFACES.md)를 따릅니다.
+Decision은 현재 Twist를 Reliable / Volatile / Keep Last 10으로 5 Hz 발행합니다. 현재 Decision 코드에는 `/vehicle/state` 구독이 구현되지 않았으므로 차량 피드백을 이용한 정지 완료 판단은 아직 연결되지 않았습니다. 인지 이벤트와 FSM은 Decision이 처리하고, Vehicle은 내려온 명령을 실행합니다. 모든 컴퓨터의 `.env`에서 ROS_DOMAIN_ID, ROS_LOCALHOST_ONLY, RMW_IMPLEMENTATION을 맞춥니다. 상세 필드와 단위는 [INTERFACES.md](INTERFACES.md)를 따릅니다.
 
 ## 6. 종료·재빌드
 

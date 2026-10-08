@@ -84,3 +84,15 @@ Gazebo Transport의 `/model/vehicle/cmd_vel`과 `/model/vehicle/odometry`는 bri
 Gazebo 일시정지 중에도 watchdog은 실제 시간으로 실행합니다. 시뮬레이터가 멈춰 있으면 물리 처리는 재개 시 진행됩니다. Vehicle 프로세스 자체가 강제 종료되면 watchdog도 멈추므로 이 기능을 하드웨어 안전 정지나 프로세스 장애 대응 장치로 간주하지 않습니다.
 
 `/system/fault`의 타입과 값은 원본 문서에 정의되어 있지 않아 이번 구현에 임의 구독을 추가하지 않았습니다. 현재 Decision은 fault/emergency 상황에서 `/cmd_vel`에 0을 발행해야 합니다.
+
+## Docker와 Gazebo 실행 구성
+
+저장소 루트의 `docker-compose.vehicle.yml`은 루트 `docker-compose.yml`에 차량 GUI 설정을 더합니다. 이미지는 루트 `Dockerfile`로 빌드하며, 여기에 Gazebo Fortress 연동용 `ros-humble-ros-gz`와 RViz 패키지를 설치합니다. Vehicle 전용 Dockerfile은 사용하지 않습니다.
+
+저장소 루트에서 `bash ros2_ws/src/vehicle_node/run_gazebo.sh --headless`를 실행하면 Gazebo, ROS-Gazebo bridge, Vehicle 노드가 시작됩니다. 주행과 주차까지 자동 검증하려면 `bash ros2_ws/src/vehicle_node/run_vehicle.sh --headless`를 실행합니다. GUI를 확인할 때는 `--headless`를 빼고 X11 환경에서 실행합니다.
+
+Compose는 컨테이너에 `ros2_ws/src`를 마운트합니다. Gazebo의 `/model/vehicle/cmd_vel`은 bridge를 통해 `/vehicle/internal/cmd_vel`에 연결되고, odometry는 `/vehicle/internal/odometry`를 거쳐 Vehicle의 `/vehicle/state`와 `/vehicle/pose`로 발행됩니다.
+
+2026-10-08 headless 검증에서 공용 이미지와 Vehicle C++ 빌드, Gazebo 기동, 전진·후진·좌우 회전·주차를 확인했습니다. 실행 종료 코드는 0이며 최종 위치는 약 `(1.373, 1.878 m)`입니다. GUI 화면 출력은 이번 검증 범위에 포함되지 않습니다.
+
+`run_gazebo.sh`를 다시 실행하면 먼저 이전 `vehicle_node` launch와 차량 월드의 Gazebo 프로세스에 종료 신호를 보내고 새 월드를 시작합니다. 다른 패키지의 Gazebo 프로세스는 종료 대상이 아닙니다. 같은 명령을 연속 실행해 이전 launch가 교체되고 차량 월드 Gazebo가 하나만 실행되는 것을 확인했습니다.

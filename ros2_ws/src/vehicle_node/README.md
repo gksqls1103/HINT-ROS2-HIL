@@ -7,13 +7,13 @@ Vehicle은 인지 → 판단 → 제어 프로젝트의 제어부입니다. Deci
 호스트 터미널에서 아래 명령을 실행하세요.
 
 ```bash
-sh /home/lee/hint/HINT-ROS2-HIL/run_vehicle.sh
+sh /home/lee/hint/HINT-ROS2-HIL/ros2_ws/src/vehicle_node/run_vehicle.sh
 ```
 
 프로젝트 폴더에 있다면:
 
 ```bash
-sh run_vehicle.sh
+sh ros2_ws/src/vehicle_node/run_vehicle.sh
 ```
 
 컨테이너 준비 → C++ 빌드 → Gazebo/RViz 실행 → 전진·후진·좌회전·우회전·후진 주차 명령을 자동으로 진행합니다. 처음에는 이미지 다운로드와 빌드 시간이 필요하며, 이후에는 빌드 캐시를 사용합니다.
@@ -31,7 +31,7 @@ Gazebo 월드는 x, y 각각 -4000 m부터 +4000 m까지 총 8 km × 8 km입니�
 GUI 없이 명령·주차만 검사하고 자동 종료하려면:
 
 ```bash
-sh run_vehicle.sh --headless
+sh ros2_ws/src/vehicle_node/run_vehicle.sh --headless
 ```
 
 ## 3. 실행 조건
@@ -47,7 +47,6 @@ Linux 호스트에 Docker와 Docker Compose가 있어야 하고, 현재 사용�
 | 경로 | 용도 |
 |---|---|
 | `run_vehicle.sh` | 호스트에서 한 줄로 실행하는 진입점 |
-| `vehicle/` | Vehicle 전용 Dockerfile과 안내 문서 |
 | `ros2_ws/src/vehicle_node/` | C++ ROS 패키지 |
 | `src/vehicle_node.cpp` | 구독·발행·제어 보호 처리 |
 | `src/driving_demo.cpp` | 주행·주차 시연 명령 |

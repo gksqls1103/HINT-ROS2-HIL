@@ -5,7 +5,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 set -e -o pipefail
 
-project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$project_dir"
 
 mode="gui"
@@ -46,11 +46,11 @@ fi
 
 docker compose -f docker-compose.yml -f docker-compose.vehicle.yml up -d --build ros2_env
 
-exec_options=(-i)
+exec_options=(-T)
 if [ -t 0 ] && [ -t 1 ]; then
-  exec_options=(-it)
+  exec_options=()
 fi
 
 echo "Gazebo, ROS bridge, Vehicle 노드를 실행합니다. 종료하려면 Ctrl+C를 누르세요."
-docker exec "${exec_options[@]}" ros2_hil_env bash \
+docker compose -f docker-compose.yml -f docker-compose.vehicle.yml exec "${exec_options[@]}" ros2_env bash \
   /ros2_ws/src/vehicle_node/scripts/run_gazebo_in_container.sh "$mode"

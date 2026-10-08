@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-cv-bridge \
     ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-ros-gz \
+    ros-humble-rviz2 \
     libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
 
