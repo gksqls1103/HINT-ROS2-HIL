@@ -118,9 +118,9 @@ int main(int argc, char ** argv)
     rclcpp::shutdown();
     return 1;
   }
-  // 새 월드 원점에서 시작해야 주차선 안에 도착하는 예시입니다.
+  // 4차로 도로의 남쪽 안쪽 차로 중앙에서 시작합니다.
   if (std::abs(node->truth.pose.pose.position.x) > 0.15 ||
-      std::abs(node->truth.pose.pose.position.y) > 0.15 ||
+      std::abs(node->truth.pose.pose.position.y + 2.25) > 0.15 ||
       std::abs(node->truth.pose.pose.orientation.z) > 0.05) {
     std::cerr << "차량이 시작점에 없습니다. launch를 종료 후 다시 실행하세요." << std::endl;
     node->send(0.0, 0.0);
@@ -151,7 +151,7 @@ int main(int argc, char ** argv)
   if (success) {
     const double x = node->truth.pose.pose.position.x;
     const double y = node->truth.pose.pose.position.y;
-    success = x > 0.9 && x < 1.7 && y > 1.55 && y < 2.05 &&
+    success = x > 0.9 && x < 1.7 && y > -0.70 && y < -0.20 &&
       std::abs(node->truth.twist.twist.linear.x) < 0.02 &&
       std::abs(node->truth.twist.twist.angular.z) < 0.02;
     std::cout << (success ? "[완료] 주차 구역 안에 정지했습니다." :

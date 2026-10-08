@@ -1,9 +1,11 @@
 // Vehicle: Decision 명령을 실행하고 Gazebo에서 측정한 상태를 전달합니다.
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -40,6 +42,14 @@ public:
     command_sub_ = create_subscription<geometry_msgs::msg::Twist>(
       "/cmd_vel", qos,
       std::bind(&VehicleNode::onCommand, this, std::placeholders::_1));
+    // 메시지 타입은 런타임에 로드해 이 파일만 수정해도 fake Vision과 연결합니다.
+    try {
+      vision_sub_ = create_generic_subscription(
+        "/vision/sign", "hil_msgs/msg/VisionSign", qos,
+        std::bind(&VehicleNode::onVision, this, std::placeholders::_1));
+    } catch (const std::runtime_error & error) {
+      RCLCPP_WARN(get_logger(), "VisionSign type support unavailable: %s", error.what());
+    }
     // 내부 피드백 구독은 두 가지 신뢰도 발행자 모두와 연결되도록 Best Effort 사용.
     rclcpp::QoS feedback_qos(10);
     feedback_qos.best_effort();
@@ -74,6 +84,64 @@ private:
     if (value > maximum) { return maximum; }
     if (value < -maximum) { return -maximum; }
     return value;
+  }
+
+  // VisionSign CDR: Header(stamp, frame_id), sign, confidence, stable_count.
+  // generic subscription을 사용하므로 필드 경계와 문자열 길이를 검사합니다.
+  void onVision(const std::shared_ptr<rclcpp::SerializedMessage> message)
+  {
+    const auto & serialized = message->get_rcl_serialized_message();
+    const uint8_t * data = serialized.buffer;
+    const size_t size = serialized.buffer_length;
+    if (!data || size < 4) { return; }
+    const bool little_endian = (data[1] & 1U) != 0;
+    size_t offset = 4;
+    auto read_u32 = [&](uint32_t & value) -> bool {
+      offset = (offset + 3U) & ~size_t(3U);
+      if (offset > size || size - offset < 4) { return false; }
+      value = 0;
+      for (size_t i = 0; i < 4; ++i) {
+        const size_t shift = little_endian ? i * 8 : (3 - i) * 8;
+        value |= static_cast<uint32_t>(data[offset + i]) << shift;
+      }
+      offset += 4;
+      return true;
+    };
+    auto read_string = [&](std::string & value) -> bool {
+      uint32_t length = 0;
+      if (!read_u32(length) || length == 0 || length > 256 ||
+          offset > size || length > size - offset || data[offset + length - 1] != 0) {
+        return false;
+      }
+      value.assign(reinterpret_cast<const char *>(data + offset), length - 1);
+      offset += length;
+      return true;
+    };
+    uint32_t ignored = 0;
+    std::string frame_id;
+    std::string sign;
+    uint32_t stable_count = 0;
+    if (!read_u32(ignored) || !read_u32(ignored) ||
+        !read_string(frame_id) || !read_string(sign) ||
+        !read_u32(ignored) || !read_u32(stable_count)) {
+      RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000,
+        "Invalid /vision/sign message; vehicle stopped");
+      vision_mode_ = true;
+      vision_go_ = false;
+      stop();
+      return;
+    }
+
+    vision_mode_ = true;
+    vision_time_ = std::chrono::steady_clock::now();
+    if (sign == "STOP" && stable_count >= 3) {
+      vision_go_ = false;
+    } else if (sign == "GO" && stable_count >= 3) {
+      vision_go_ = true;
+    } else if (sign != "NONE" && sign != "STOP" && sign != "GO") {
+      vision_go_ = false;
+    }
+    sendCommand();  // STOP을 즉시 Gazebo에 전달합니다.
   }
 
   // Decision -> Vehicle: 전진속도와 회전속도를 받습니다.
@@ -114,13 +182,21 @@ private:
   void sendCommand()
   {
     const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-    const double command_age = std::chrono::duration<double>(now - command_time_).count();
     const double feedback_age = std::chrono::duration<double>(now - feedback_time_).count();
-    if (!have_command_ || !have_feedback_ || command_age > command_timeout_ ||
-        feedback_age > feedback_timeout_) {
+    if (!have_feedback_ || feedback_age > feedback_timeout_) {
       stop();
       return;
     }
+    if (vision_mode_) {
+      const double vision_age = std::chrono::duration<double>(now - vision_time_).count();
+      if (vision_age > 1.0) { stop(); return; }
+      geometry_msgs::msg::Twist vision_command;
+      if (vision_go_) { vision_command.linear.x = 0.3; }
+      command_pub_->publish(vision_command);
+      return;
+    }
+    const double command_age = std::chrono::duration<double>(now - command_time_).count();
+    if (!have_command_ || command_age > command_timeout_) { stop(); return; }
     command_pub_->publish(command_);
   }
 
@@ -156,14 +232,18 @@ private:
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr state_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr command_sub_;
+  rclcpp::GenericSubscription::SharedPtr vision_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odometry_sub_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   rclcpp::TimerBase::SharedPtr timer_;
   geometry_msgs::msg::Twist command_;
   std::chrono::steady_clock::time_point command_time_;
   std::chrono::steady_clock::time_point feedback_time_;
+  std::chrono::steady_clock::time_point vision_time_;
   bool have_command_ = false;
   bool have_feedback_ = false;
+  bool vision_mode_ = false;
+  bool vision_go_ = true;
   double command_timeout_, feedback_timeout_, max_linear_speed_, max_angular_speed_;
 };
 

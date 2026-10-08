@@ -71,6 +71,14 @@ for y in CENTERS:
         visual(f"ew_center_{y}_{side}", 0,
                y + side * 0.12, 0.034,
                8000, 0.07, 0.008, YELLOW)
+    # Each half of the 18 m avenue has two 4.5 m driving lanes.
+    if width(y) == 18:
+        for side in (-1, 1):
+            for x in range(-240, 241, 12):
+                if any(abs(x - junction) < 12 for junction in CENTERS):
+                    continue
+                visual(f"ew_lane_{y}_{side}_{x}", x, y + side * 4.5,
+                       0.038, 4, 0.12, 0.006, WHITE)
 
 for x in CENTERS:
     for side in (-1, 1):
@@ -80,6 +88,13 @@ for x in CENTERS:
         visual(f"ns_center_{x}_{side}",
                x + side * 0.12, 0,
                0.034, 0.07, 8000, 0.008, YELLOW)
+    if width(x) == 18:
+        for side in (-1, 1):
+            for y in range(-240, 241, 12):
+                if any(abs(y - junction) < 12 for junction in CENTERS):
+                    continue
+                visual(f"ns_lane_{x}_{side}_{y}", x + side * 4.5, y,
+                       0.038, 0.12, 4, 0.006, WHITE)
 
 # Detailed streetscape around the spawn area. Keep all raised objects beyond
 # the 18 m avenue's edge so the vehicle's original test route remains clear.
@@ -91,14 +106,6 @@ for side in (-1, 1):
                   length, 2.2, 0.12, CONCRETE)
         visual(f"curb_{side}_{start}", center, side * 9.32, 0.12,
                length, 0.16, 0.18, CURB)
-
-    # Four driving lanes on the avenue; broken white paint divides lanes in
-    # each direction. Leave the central intersection unpainted.
-    for x in range(-120, 121, 12):
-        if abs(x) < 15:
-            continue
-        visual(f"lane_dash_{side}_{x}", x, side * 4.5, 0.038,
-               4, 0.12, 0.006, WHITE)
 
     for i in range(8):
         y = side * (1.1 + i * 0.9)
