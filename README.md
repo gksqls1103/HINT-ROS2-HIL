@@ -90,14 +90,32 @@ USB 카메라를 사용하는 경우 위 설치 과정 없이, `ls /dev/video*`�
 
 ### 담당 C: Safety / STM32 Bridge
 
-`.env`의 `SAFETY_SERIAL_DEVICE`를 실제 STM32 장치 경로로 설정한 뒤 실행합니다.
+STM32 시리얼(UART)과 ROS2를 연결하는 `safety_node`(C++)를 개발합니다. 상세 설명과 동작 확인 방법은 [`docs/safety/`](docs/safety/README.md)를 참고합니다.
 
-```bash
-docker compose -f docker-compose.yml -f docker-compose.safety.yml up -d --build
-docker exec -it ros2_hil_env bash
+**Raspberry Pi (STM32 USB 직결)**
+
+`ls /dev/ttyACM* /dev/ttyUSB*`로 장치 경로를 확인해 `.env`의 `SAFETY_SERIAL_DEVICE`에 지정한 뒤 실행합니다. (Pi 실장비 검증 전)
+
+```
+docker compose -f docker-compose.yml -f docker-compose.pi.yml -f docker-compose.safety.yml up -d --build
 ```
 
-시리얼 경로는 `ls /dev/ttyUSB*` 및 `ls /dev/ttyACM*`으로 확인합니다.
+**Mac 개발 (소켓 중계)**
+
+Mac은 USB 장치를 컨테이너에 직접 연결할 수 없어, 호스트에서 시리얼을 TCP로 중계합니다.
+
+```
+brew install socat                        # 최초 1회
+./scripts/safety/serial_relay_mac.sh      # 중계 실행 (터미널을 켜 둠)
+docker compose -f docker-compose.yml -f docker-compose.safety.mac.yml up -d
+```
+
+**노드 실행** (컨테이너 안)
+
+```
+colcon build --packages-select safety_node && source install/setup.bash
+ros2 run safety_node safety_bridge
+```
 
 ### 담당 D: Decision / State Machine
 
