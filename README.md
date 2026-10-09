@@ -144,7 +144,7 @@ ros2 node list
 ros2 topic list
 ```
 
-ROS 2 노드가 서로 보이지 않으면 방화벽, Wi-Fi의 장치 간 통신 차단, `ROS_DOMAIN_ID`, DDS 설정을 확인합니다.
+ROS 2 노드가 서로 보이지 않으면 방화벽, Wi-Fi의 장치 간 통신 차단, `ROS_DOMAIN_ID`, DDS 설정을 확인합니다. Cyclone DDS는 기본적으로 `eth0`를 사용하도록 설정되어 있습니다. 실제 LAN 인터페이스 이름이 다르면 `.env`에서 `CYCLONEDDS_URI`를 해당 인터페이스로 지정합니다. 인터페이스 이름은 컨테이너에서 `ros2 doctor --report`로 확인할 수 있습니다.
 
 ### 컨테이너 종료 및 재생성
 
