@@ -47,6 +47,12 @@ vision_node:
     hsv_v_min: 120
     hsv_min_ratio: 0.04
 
-    # 디버그 이미지 (노트북 rqt_image_view 확인용, 평소엔 false)
+    # 디버그 이미지 (web:=true 또는 rqt_image_view 확인용, 평소엔 false)
     publish_debug_image: false
-    debug_image_rate: 2.0
+    debug_image_rate: 5.0
+
+web_viewer:
+  ros__parameters:
+    # launch web:=true → http://<Pi IP>:8080 (VS Code Remote-SSH는 포트 전달 후 localhost:8080)
+    image_topic: "/vision/debug/compressed"
+    port: 8080

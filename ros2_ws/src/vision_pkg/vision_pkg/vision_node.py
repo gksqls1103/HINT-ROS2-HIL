@@ -240,7 +240,7 @@ class VisionNode(Node):
                 self.infer_ms = (time.monotonic() - t0) * 1000
                 self.debouncer.update(raw)
                 self.proc_times.append(now)
-                if self.pub_dbg and now - self.last_dbg >= self.debug_period:
+                if self.pub_dbg and now - self.last_dbg >= self.debug_period * 0.9:  # 타이머 주기 경계에서 한 틱 밀리지 않게 여유
                     self.last_dbg = now
                     self._publish_debug(draw(frame, dets, self.debouncer.state, self._fps()))
             sign = self.debouncer.state
