@@ -7,14 +7,17 @@ Vision Node (담당 B) — Docker 컨테이너에서 실행
   "device" : /dev/videoX 직접 읽기 (예비용)
 
 발행
-  /vision/sign   std_msgs/String  "STOP" | "GO" | "NONE"   (Reliable, publish_rate Hz로 계속 발행)
-  /vision/fault  std_msgs/String  "OK" | "CAMERA_NO_PUBLISHER" | "CAMERA_OPEN_FAILED"
-                                  | "CAMERA_TIMEOUT" | "IMAGE_DECODE_ERROR" | "LOW_FPS"
+  /vision/sign   std_msgs/String  "STOP" | "GO" | "NONE"   (Reliable, 카메라 정상일 때 publish_rate Hz로 발행)
+  # /vision/fault  std_msgs/String  "OK" | "CAMERA_NO_PUBLISHER" | "CAMERA_OPEN_FAILED"
+  #                                 | "CAMERA_TIMEOUT" | "IMAGE_DECODE_ERROR" | "LOW_FPS"
+  # (/vision/fault는 추후 다시 사용할 때까지 주석 처리)
   /vision/debug/compressed  sensor_msgs/CompressedImage  (publish_debug_image=true일 때만, BestEffort)
 
 동작
   입력에서 최신 프레임만 유지 → 타이머마다 새 프레임이면 YOLO(ONNX) + HSV 판단 → 디바운싱 → 발행
-  Fault 상태에서는 /vision/sign 을 NONE 으로 보내고, 원인은 /vision/fault 로 알린다.
+  /vision/sign 에는 인지 결과만 담는다 (인식 없음 = NONE).
+  카메라 장애 시에는 /vision/sign 발행을 멈추고(수신 측은 끊김으로 판단), 원인은 노드 로그로 남긴다.
+  # Fault 상태에서는 /vision/sign 을 NONE 으로 보내고, 원인은 /vision/fault 로 알린다.
 """
 import os
 import threading
@@ -156,7 +159,7 @@ class VisionNode(Node):
         P("debounce_window", 5)
         P("debounce_votes", 3)
         P("frame_timeout", 1.0)  # 이 시간 이상 새 프레임 없으면 CAMERA_TIMEOUT
-        P("min_fps", 2.0)        # 처리 FPS가 이 값 미만이면 LOW_FPS
+        P("min_fps", 2.0)        # 처리 FPS가 이 값 미만이면 LOW_FPS (LOW_FPS 판정은 현재 주석 처리)
         P("hsv_red1", [0, 10])
         P("hsv_red2", [160, 179])
         P("hsv_yellow", [15, 35])
@@ -198,7 +201,7 @@ class VisionNode(Node):
         reliable = QoSProfile(reliability=ReliabilityPolicy.RELIABLE,
                               history=HistoryPolicy.KEEP_LAST, depth=10)
         self.pub_sign = self.create_publisher(String, "/vision/sign", reliable)
-        self.pub_fault = self.create_publisher(String, "/vision/fault", reliable)
+        # self.pub_fault = self.create_publisher(String, "/vision/fault", reliable)
         self.pub_dbg = self.create_publisher(CompressedImage, "/vision/debug/compressed",
                                              qos_profile_sensor_data) if self.debug_on else None
 
@@ -208,7 +211,7 @@ class VisionNode(Node):
         self.last_dbg = 0.0
         self.last_stat = time.monotonic()
         self.last_sign, self.last_fault = None, None
-        self.ok_since = time.monotonic()  # Fault에서 회복한 시각. 직후 FPS 창이 덜 찬 동안은 LOW_FPS 판정 안 함
+        # self.ok_since = time.monotonic()  # Fault에서 회복한 시각. 직후 FPS 창이 덜 찬 동안은 LOW_FPS 판정 안 함
         self.timer = self.create_timer(1.0 / g("publish_rate"), self.tick)
 
     def _fps(self):
@@ -230,39 +233,41 @@ class VisionNode(Node):
         frame, stamp = self.cam.latest()
         fault = self._check_fault(frame, stamp, now)
 
-        sign = "NONE"
-        if fault == "OK":
-            if stamp != self.last_stamp:  # 새 프레임일 때만 추론
-                self.last_stamp = stamp
-                t0 = time.monotonic()
-                dets = self.model.detect(frame, self.vp.conf_thres, self.vp.nms_thres)
-                raw = decide_sign(frame, dets, self.vp)
-                self.infer_ms = (time.monotonic() - t0) * 1000
-                self.debouncer.update(raw)
-                self.proc_times.append(now)
-                if self.pub_dbg and now - self.last_dbg >= self.debug_period * 0.9:  # 타이머 주기 경계에서 한 틱 밀리지 않게 여유
-                    self.last_dbg = now
-                    self._publish_debug(draw(frame, dets, self.debouncer.state, self._fps()))
-            sign = self.debouncer.state
-            if now - self.ok_since > 3.0 and self._fps() < self.min_fps:
-                fault = "LOW_FPS"
-        else:
+        if fault != self.last_fault:
+            # rclpy는 같은 호출 위치에서 로그 레벨이 바뀌면 ValueError → 레벨별로 호출을 나눈다
+            if fault == "OK":
+                self.get_logger().info("카메라 정상 → /vision/sign 발행")
+            else:
+                self.get_logger().warn(f"카메라 장애: {fault} → /vision/sign 발행 중단")
+            self.last_fault = fault
+
+        if fault != "OK":  # 장애 시 NONE을 보내지 않고 발행을 멈춘다 (수신 측은 끊김으로 판단)
             self.debouncer.reset()
-            self.ok_since = now
+            self.last_sign = None
+            # self.ok_since = now
+            return
+
+        if stamp != self.last_stamp:  # 새 프레임일 때만 추론
+            self.last_stamp = stamp
+            t0 = time.monotonic()
+            dets = self.model.detect(frame, self.vp.conf_thres, self.vp.nms_thres)
+            raw = decide_sign(frame, dets, self.vp)
+            self.infer_ms = (time.monotonic() - t0) * 1000
+            self.debouncer.update(raw)
+            self.proc_times.append(now)
+            if self.pub_dbg and now - self.last_dbg >= self.debug_period * 0.9:  # 타이머 주기 경계에서 한 틱 밀리지 않게 여유
+                self.last_dbg = now
+                self._publish_debug(draw(frame, dets, self.debouncer.state, self._fps()))
+        sign = self.debouncer.state
+        # if now - self.ok_since > 3.0 and self._fps() < self.min_fps:
+        #     fault = "LOW_FPS"
 
         self.pub_sign.publish(String(data=sign))
-        self.pub_fault.publish(String(data=fault))
+        # self.pub_fault.publish(String(data=fault))
 
         if sign != self.last_sign:
             self.get_logger().info(f"/vision/sign: {self.last_sign} → {sign}")
             self.last_sign = sign
-        if fault != self.last_fault:
-            # rclpy는 같은 호출 위치에서 로그 레벨이 바뀌면 ValueError → 레벨별로 호출을 나눈다
-            if fault == "OK":
-                self.get_logger().info(f"/vision/fault: {fault}")
-            else:
-                self.get_logger().warn(f"/vision/fault: {fault}")
-            self.last_fault = fault
         if now - self.last_stat >= 5.0:  # 5초마다 성능 로그
             self.last_stat = now
             self.get_logger().info(f"처리 {self._fps():.1f} FPS, 추론 {self.infer_ms:.0f} ms, sign={sign}")
