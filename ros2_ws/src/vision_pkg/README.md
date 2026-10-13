@@ -9,7 +9,7 @@
 │   → v4l2loopback /dev/video10 ──▶   → /camera/image_raw (bgr8, 15Hz)      │
 │   (pi-camera-bridge 서비스)          → vision_node (YOLO ONNX + HSV)       │
 └──────────────────────────────────────────│──────────────────────────────┘
-                                           │ /vision/sign, /vision/fault (10Hz)
+                                           │ /vision/sign (10Hz)
                                            ▼
                           [노트북] D: Decision FSM → Gazebo 차량
 ```
@@ -43,20 +43,20 @@
 | Topic | 방향 | 타입 | 값 / QoS |
 |---|---|---|---|
 | `/camera/image_raw` | camera_publisher → vision_node | `sensor_msgs/Image` 또는 `CompressedImage` | BestEffort로 구독 (발행자가 Reliable이어도 연결됨) |
-| `/vision/sign` | 발행 | `std_msgs/String` | `STOP` / `GO` / `NONE`, Reliable, **10Hz 계속 발행** |
-| `/vision/fault` | 발행 | `std_msgs/String` | 아래 표, Reliable, 10Hz |
+| `/vision/sign` | 발행 | `std_msgs/String` | `STOP` / `GO` / `NONE`, Reliable, **카메라 정상일 때 10Hz 발행** |
 | `/vision/debug/compressed` | 발행 | `sensor_msgs/CompressedImage` | 박스 그린 JPEG, BestEffort, 기본 꺼짐 |
 
-| Fault 코드 | 의미 |
+- `/vision/sign`에는 인지 결과만 담는다. 인식된 표지가 없으면 `NONE`.
+- 카메라 장애 시에는 `/vision/sign` 발행을 **멈춘다** (`NONE`을 보내지 않음). 수신 측(D)은 메시지 끊김으로 장애를 판단한다.
+- 장애 원인은 노드 로그로 확인한다 (`카메라 장애: <코드> → /vision/sign 발행 중단`). `/vision/fault` 토픽은 추후 다시 사용할 때까지 주석 처리.
+
+| 장애 코드 (로그) | 의미 |
 |---|---|
-| `OK` | 정상 |
 | `CAMERA_NO_PUBLISHER` | 카메라 topic 발행자가 없음 (camera_publisher 꺼짐) |
 | `CAMERA_TIMEOUT` | `frame_timeout`(1초) 이상 새 프레임 없음 |
 | `IMAGE_DECODE_ERROR` | 지원하지 않는 encoding 등으로 변환 실패 |
-| `LOW_FPS` | 처리 FPS가 `min_fps`(2) 미만 |
 | `CAMERA_OPEN_FAILED` | (device 모드) 장치 열기 실패 |
 
-- Fault 상태에서는 `/vision/sign`을 `NONE`으로 보낸다. 감속/정지 판단은 D의 FSM이 한다.
 - 지원 encoding: `bgr8`, `rgb8`, `bgra8`, `rgba8`, `mono8`, `yuv422`(UYVY), `yuv422_yuy2`(YUYV), `nv12`, `nv21`, `i420`, CompressedImage(jpeg/png)
 
 
@@ -77,7 +77,6 @@ ros2 launch vision_pkg vision.launch.py camera:=false       # vision_node만
 ```bash
 ros2 topic hz /camera/image_raw      # ~15 Hz
 ros2 topic echo /vision/sign
-ros2 topic echo /vision/fault
 ros2 topic hz /vision/sign           # ~10 Hz
 ros2 run rqt_image_view rqt_image_view /vision/debug/compressed
 ```
@@ -86,7 +85,7 @@ ros2 run rqt_image_view rqt_image_view /vision/debug/compressed
 Pi 5 측정값 (640x480, `onnx_threads: 2`): 카메라 발행 ~15 Hz, 처리 10 FPS, 추론 60~70 ms.
 `onnx_threads: 4`로 올리면 추론은 조금 빨라지지만 camera_publisher와 CPU를 다퉈 카메라가 ~10 Hz로 떨어진다.
 
-Fault 확인: camera_publisher를 끄면 `CAMERA_NO_PUBLISHER`, 다시 켜면 `OK`.
+장애 확인: camera_publisher를 끄면 `/vision/sign` 발행이 멈추고 로그에 `CAMERA_NO_PUBLISHER`, 다시 켜면 발행 재개.
 호스트 브리지(`sudo systemctl stop pi-camera-bridge`)를 멈추면 `CAMERA_TIMEOUT`.
 
 ## 테스트 사진으로 정확도 확인
