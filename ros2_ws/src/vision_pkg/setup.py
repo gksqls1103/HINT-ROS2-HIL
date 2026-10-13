@@ -18,6 +18,7 @@ setup(
     entry_points={"console_scripts": [
         "camera_publisher = vision_pkg.camera_publisher:main",
         "vision_node = vision_pkg.vision_node:main",
+        "web_viewer = vision_pkg.web_viewer:main",
         "topic_capture = vision_pkg.topic_capture:main",
     ]},
 )
