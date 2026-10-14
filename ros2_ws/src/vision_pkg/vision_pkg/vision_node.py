@@ -149,7 +149,7 @@ class VisionNode(Node):
         P("camera_width", 640)
         P("camera_height", 480)
         P("camera_fourcc", "")
-        P("model_path", "")       # 비우면 패키지에 설치된 models/yolov8n_320.onnx
+        P("model_path", "")       # 비우면 models/yolov8n_320.onnx, 파일 이름만 주면 패키지 models/ 안에서 찾음
         P("onnx_threads", 4)
         P("publish_rate", 10.0)
         P("conf_thres", 0.35)
@@ -183,8 +183,9 @@ class VisionNode(Node):
         self.debug_on = g("publish_debug_image")
         self.debug_period = 1.0 / max(0.1, g("debug_image_rate"))
 
-        model_path = g("model_path") or os.path.join(
-            get_package_share_directory("vision_pkg"), "models", "yolov8n_320.onnx")
+        model_path = g("model_path") or "yolov8n_320.onnx"
+        if not os.path.isabs(model_path):
+            model_path = os.path.join(get_package_share_directory("vision_pkg"), "models", model_path)
         self.model = YoloOnnx(model_path, threads=g("onnx_threads"))
         self.get_logger().info(f"모델 로드: {model_path} (imgsz={self.model.imgsz})")
         self.debouncer = SignDebouncer(g("debounce_window"), g("debounce_votes"))
