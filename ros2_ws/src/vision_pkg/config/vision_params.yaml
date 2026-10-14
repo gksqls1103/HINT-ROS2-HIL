@@ -38,14 +38,16 @@ vision_node:
     frame_timeout: 1.0
     min_fps: 2.0
 
-    # HSV (tools/vision_test.py --calib 결과로 교체)
+    # 신호등 색 판별 (HSV 범위 + 켜진 램프 기준)
     hsv_red1: [0, 10]
     hsv_red2: [160, 179]
     hsv_yellow: [15, 35]
     hsv_green: [40, 95]
     hsv_s_min: 80
     hsv_v_min: 120
-    hsv_min_ratio: 0.04
+    hsv_min_ratio: 0.02        # 켜진 램프 덩어리 면적 / 신호등 박스 면적 최소 (tools/eval_color.py로 선정)
+    hsv_max_ratio: 0.5         # 이보다 큰 덩어리는 신호등 몸체로 보고 무시
+    hsv_lit_v: [0, 220, 220]   # RED, YELLOW, GREEN 램프 덩어리 밝기(V 상위 10%) 최소
 
     # 디버그 이미지 (web:=true 또는 rqt_image_view 확인용, 평소엔 false)
     publish_debug_image: false
