@@ -1,7 +1,7 @@
 """
 ROS2와 무관한 순수 Vision 로직.
 - YoloOnnx      : COCO 사전학습 YOLO(ONNX)로 traffic light / stop sign 검출
-- classify_light: 신호등 bbox 안의 색을 HSV로 판별 (RED / YELLOW / GREEN / UNKNOWN)
+- classify_light: 신호등 bbox 안에서 켜진 램프를 찾아 색 판별 (RED / YELLOW / GREEN / UNKNOWN)
 - decide_sign   : 한 프레임의 검출 결과 → STOP / GO / NONE
 - SignDebouncer : 최근 N프레임 중 M프레임 이상 같은 결과일 때만 상태 변경
 
@@ -41,7 +41,11 @@ class HsvParams:
     green: tuple = (40, 95)
     s_min: int = 80
     v_min: int = 120
-    min_ratio: float = 0.04  # bbox 면적 대비 해당 색 픽셀 비율 최소값
+    min_ratio: float = 0.02  # 램프 덩어리 면적 / bbox 면적 최소값 (작은 반사·잡음 무시)
+    max_ratio: float = 0.5  # 이보다 큰 덩어리는 신호등 몸체(노란색 몸체 등)로 보고 무시
+    # 켜진 램프 판정: 덩어리 밝기(V 상위 10%)가 이 값 이상 (RED, YELLOW, GREEN 순)
+    # 노란 몸체·청록 배경은 어둡고, 켜진 노랑·초록 램프는 거의 포화된다. 빨강은 어둡게 찍혀 기준 없음
+    lit_v: tuple = (0, 220, 220)
 
 
 @dataclass
@@ -131,14 +135,24 @@ def color_masks(crop_bgr, p: HsvParams):
 
 
 def classify_light(crop_bgr, p: HsvParams):
-    """신호등 crop의 색 판별. (color, {color: ratio}) 반환."""
+    """신호등 crop의 색 판별. (color, {color: 램프 덩어리 면적비}) 반환.
+    색별 마스크에서 연결된 덩어리를 찾고, 크기(min_ratio~max_ratio)와 밝기(lit_v)를 만족하는
+    가장 큰 덩어리의 색으로 정한다. 없으면 UNKNOWN (꺼짐·옆면·뒷면)."""
     if crop_bgr is None or crop_bgr.size == 0:
         return "UNKNOWN", {}
-    masks = color_masks(crop_bgr, p)
+    v = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2HSV)[:, :, 2]
     total = crop_bgr.shape[0] * crop_bgr.shape[1]
-    ratios = {k: cv2.countNonZero(m) / total for k, m in masks.items()}
+    ratios = {}
+    for (color, m), lit in zip(color_masks(crop_bgr, p).items(), p.lit_v):
+        n, labels, stats, _ = cv2.connectedComponentsWithStats(m)
+        best = 0.0
+        for i in range(1, n):
+            r = stats[i, cv2.CC_STAT_AREA] / total
+            if p.min_ratio <= r <= p.max_ratio and r > best and np.percentile(v[labels == i], 90) >= lit:
+                best = r
+        ratios[color] = best
     color = max(ratios, key=ratios.get)
-    if ratios[color] < p.min_ratio:
+    if ratios[color] == 0:
         return "UNKNOWN", ratios
     return color, ratios
 
