@@ -22,12 +22,12 @@ vision_node:
     camera_fourcc: ""
 
     # 모델
-    model_path: ""             # 비우면 패키지에 설치된 models/yolov8n_320.onnx
+    model_path: ""             # 비우면 models/yolo11s_416_int8.onnx, 파일 이름만 쓰면 패키지 models/ 안에서 찾음
     onnx_threads: 2             # 4면 카메라 발행과 CPU 경쟁 (Pi 5: 2 → 카메라 15Hz, 추론 ~65ms)
 
     # 발행 / 판단
     publish_rate: 10.0
-    conf_thres: 0.35
+    conf_thres: 0.25           # yolo11s_416_int8 기준 (COCO val 32px 이상 신호등: 검출률 74%, 정밀도 80%)
     nms_thres: 0.45
     min_area_ratio: 0.002      # 화면 대비 bbox 면적. 휴대폰이 멀면 무시하도록 키운다
     yellow_as: "STOP"          # STOP 또는 NONE (D와 합의)

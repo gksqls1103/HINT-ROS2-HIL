@@ -34,7 +34,8 @@
 | `vision_pkg/topic_capture.py` | 카메라 topic 점검(FPS/해상도/encoding/지연) + 테스트 사진 저장 |
 | `config/vision_params.yaml` | 카메라, 임계값, HSV 파라미터 |
 | `launch/vision.launch.py` | camera_publisher + vision_node 실행 |
-| `models/yolov8n_320.onnx` | COCO 사전학습 YOLOv8n, 입력 320. 패키지 share에 설치됨 |
+| `models/yolo11s_416_int8.onnx` | 기본 모델. COCO 사전학습 YOLO11s, 입력 416, INT8 양자화 (`tools/quantize_int8.py`). 패키지 share에 설치됨 |
+| `models/yolov8n_320.onnx` | 이전 기본 모델 (COCO 사전학습 YOLOv8n, 입력 320). `model:=yolov8n_320.onnx`로 사용 |
 | `tools/vision_test.py` | ROS2 없이 사진/영상으로 검증, HSV 캘리브레이션 |
 | `tools/export_model.py` | 노트북에서 YOLO → ONNX 변환 (ultralytics 필요) |
 
