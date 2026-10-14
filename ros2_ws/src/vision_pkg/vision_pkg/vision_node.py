@@ -166,7 +166,9 @@ class VisionNode(Node):
         P("hsv_green", [40, 95])
         P("hsv_s_min", 80)
         P("hsv_v_min", 120)
-        P("hsv_min_ratio", 0.04)
+        P("hsv_min_ratio", 0.02)
+        P("hsv_max_ratio", 0.5)
+        P("hsv_lit_v", [0, 220, 220])
         P("publish_debug_image", False)
         P("debug_image_rate", 2.0)
 
@@ -177,7 +179,8 @@ class VisionNode(Node):
             hsv=HsvParams(
                 red1=tuple(g("hsv_red1")), red2=tuple(g("hsv_red2")),
                 yellow=tuple(g("hsv_yellow")), green=tuple(g("hsv_green")),
-                s_min=g("hsv_s_min"), v_min=g("hsv_v_min"), min_ratio=g("hsv_min_ratio")))
+                s_min=g("hsv_s_min"), v_min=g("hsv_v_min"), min_ratio=g("hsv_min_ratio"),
+                max_ratio=g("hsv_max_ratio"), lit_v=tuple(g("hsv_lit_v"))))
         self.frame_timeout = g("frame_timeout")
         self.min_fps = g("min_fps")
         self.debug_on = g("publish_debug_image")

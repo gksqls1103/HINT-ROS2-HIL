@@ -154,6 +154,7 @@ def run_calib(get_frame, model, vp, on_next=None):
     print(f"hsv_red1: [{p.red1[0]}, {p.red1[1]}]\nhsv_red2: [{p.red2[0]}, {p.red2[1]}]")
     print(f"hsv_yellow: [{p.yellow[0]}, {p.yellow[1]}]\nhsv_green: [{p.green[0]}, {p.green[1]}]")
     print(f"hsv_s_min: {p.s_min}\nhsv_v_min: {p.v_min}\nhsv_min_ratio: {p.min_ratio:.3f}")
+    print(f"hsv_max_ratio: {p.max_ratio}\nhsv_lit_v: [{p.lit_v[0]}, {p.lit_v[1]}, {p.lit_v[2]}]")
 
 
 def main():
