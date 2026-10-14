@@ -6,6 +6,7 @@
   python3 tools/eval_detect.py                                    # models/*.onnx 전부, 세트 A
   python3 tools/eval_detect.py --models yolov8n_320.onnx yolo11n_416.onnx --set B
   python3 tools/eval_detect.py --models yolo11n_320.onnx --vis 20  # 결과 이미지 20장 저장
+  python3 tools/eval_detect.py --min-height 32                    # 높이 32px 미만 신호등은 채점 제외
 
 데이터: tools/coco_prepare.py 결과 (test_imgs/coco/source/<세트>/ 사진 + labels.json)
 노드와 같은 YoloOnnx(전처리·추론·후처리)로 traffic light만 채점한다.
@@ -14,6 +15,7 @@
   검출률(recall) = 맞힌 정답 / 전체 정답,  정밀도(precision) = 맞힌 검출 / 전체 검출
   AP50  = 임계값과 무관한 종합 점수 (precision-recall 곡선 아래 면적, COCO 101점 방식)
   크기별 검출률: 정답 박스 면적 small < 32², medium < 96², large (원본 픽셀, COCO 기준)
+--min-height: 그보다 작은 정답은 빼고, 그 정답과 맞거나 그보다 작은 검출도 오검출로 세지 않는다 (COCO 크기 구간 채점과 같은 방식)
 추론은 사진마다 1번(conf 0.01)만 하고, 임계값별 결과는 그 결과로 다시 계산한다.
 """
 import argparse
@@ -83,7 +85,7 @@ def ap50(scores, tps, n_gt):
     return float(np.mean([prec[i] if i < len(prec) else 0.0 for i in idx]))
 
 
-def evaluate(model_path, items, img_dir, threads, vis_dir=None, vis_n=0, vis_conf=0.35):
+def evaluate(model_path, items, img_dir, threads, vis_dir=None, vis_n=0, vis_conf=0.35, min_h=0):
     model = YoloOnnx(model_path, threads=threads)
     run = model.sess.run
     infer_t = []
@@ -110,11 +112,16 @@ def evaluate(model_path, items, img_dir, threads, vis_dir=None, vis_n=0, vis_con
         total_t.append(time.perf_counter() - t)
         d = [((float(x1), float(y1), float(x2), float(y2)), det.conf)
              for det in dets for x1, y1, x2, y2 in [det.box]]
-        gts = [(x, y, x + w, y + h) for x, y, w, h in it["boxes"]]
+        keep = [b for b in it["boxes"] if b[3] >= min_h]
+        small = [(x, y, x + w, y + h) for x, y, w, h in it["boxes"] if h < min_h]
+        gts = [(x, y, x + w, y + h) for x, y, w, h in keep]
         tp, hit = match(d, gts)
-        scores += [s for _, s in d]
-        tps += tp
-        gt_sizes += [size_of(w, h) for _, _, w, h in it["boxes"]]
+        for i, ((x1, y1, x2, y2), _) in enumerate(d):  # 제외한 작은 정답과 맞거나 작은 검출은 채점에서 뺀다
+            if not tp[i] and (y2 - y1 < min_h or (small and iou((x1, y1, x2, y2), np.array(small)).max() >= IOU_THRES)):
+                continue
+            scores.append(d[i][1])
+            tps.append(tp[i])
+        gt_sizes += [size_of(w, h) for _, _, w, h in keep]
         gt_scores += hit
         if vis_dir and k < vis_n:
             v = img.copy()
@@ -143,7 +150,7 @@ def evaluate(model_path, items, img_dir, threads, vis_dir=None, vis_n=0, vis_con
                       "tp": tp, "fp": n_det - tp, "by_size": by_size})
     ms = lambda a: (round(float(np.median(a)) * 1000, 1), round(float(np.percentile(a, 95)) * 1000, 1))
     return {"model": os.path.basename(model_path), "imgsz": model.imgsz, "threads": threads,
-            "images": len(items), "gt": n_gt, "ap50": round(ap50(scores, tps, n_gt), 4),
+            "images": len(items), "gt": n_gt, "min_height": min_h, "ap50": round(ap50(scores, tps, n_gt), 4),
             "total_ms": ms(total_t), "infer_ms": ms(infer_t), "sweep": sweep}
 
 
@@ -158,6 +165,7 @@ def main():
     ap.add_argument("--set", default="A", help="A(모델 비교용) / B(최종 확인용)")
     ap.add_argument("--threads", type=int, default=2, help="onnx_threads (노드 기본값 2)")
     ap.add_argument("--conf", type=float, default=0.35, help="표에 보여줄 임계값 (노드 conf_thres)")
+    ap.add_argument("--min-height", type=float, default=0, help="이 높이(원본 px) 미만 신호등은 채점 제외")
     ap.add_argument("--limit", type=int, default=0, help="앞에서 N장만 (빠른 확인용)")
     ap.add_argument("--vis", type=int, default=0, help="결과 이미지 N장 저장 (정답 초록, 검출 빨강)")
     ap.add_argument("--out", default=os.path.join(PKG_DIR, "result", "eval_detect"))
@@ -171,7 +179,8 @@ def main():
     if args.limit:
         items = items[:args.limit]
     os.makedirs(args.out, exist_ok=True)
-    print(f"세트 {args.set}: 사진 {len(items)}장, 정답 {sum(len(i['boxes']) for i in items)}개, "
+    n_gt = sum(1 for i in items for b in i["boxes"] if b[3] >= args.min_height)
+    print(f"세트 {args.set}: 사진 {len(items)}장, 정답 {n_gt}개 (높이 {args.min_height:g}px 이상), "
           f"threads={args.threads}, conf={args.conf}")
 
     results = []
@@ -182,9 +191,10 @@ def main():
             vis_dir = os.path.join(args.out, f"vis_{name}_{args.set}")
             os.makedirs(vis_dir, exist_ok=True)
         print(f"  평가 중: {name} ...", flush=True)
-        r = evaluate(m, items, img_dir, args.threads, vis_dir, args.vis, args.conf)
+        r = evaluate(m, items, img_dir, args.threads, vis_dir, args.vis, args.conf, args.min_height)
         results.append(r)
-        with open(os.path.join(args.out, f"{name}_{args.set}.json"), "w") as f:
+        tag = f"_h{args.min_height:g}" if args.min_height else ""
+        with open(os.path.join(args.out, f"{name}_{args.set}{tag}.json"), "w") as f:
             json.dump(r, f, indent=1)
 
     print(f"\n[conf={args.conf}] 검출률 = 맞힌 정답/전체, 크기별은 맞힌 수/정답 수")
