@@ -5,11 +5,17 @@ services:
     # 호스트의 디렉토리를 컨테이너에 동기화
     volumes:
       - ./ros2_ws/src:/ros2_ws/src
+      - ./scripts/cyclonedds:/hil/cyclonedds:ro
     # ROS2 노드 간 통신을 위한 공통 환경변수
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-42}
       - ROS_LOCALHOST_ONLY=${ROS_LOCALHOST_ONLY:-0}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
+      # 멀티캐스트가 막힌 Wi-Fi용 유니캐스트 탐색 설정 (컨테이너 시작 시 설정 파일 생성)
+      - CYCLONEDDS_PEERS=${CYCLONEDDS_PEERS:-}
+      - CYCLONEDDS_INTERFACE=${CYCLONEDDS_INTERFACE:-}
+      - CYCLONEDDS_URI=file:///tmp/cyclonedds.xml
+    entrypoint: ["/hil/cyclonedds/entrypoint.sh"]
     # ROS2 노드 간 통신을 위해 호스트 네트워크 사용
     network_mode: host
     # 컨테이너를 백그라운드에서 유지
