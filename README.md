@@ -33,11 +33,18 @@
 실제 카메라와 STM32를 연결하지 않고 Gazebo GUI만 추가합니다.
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.vehicle.yml up -d --build
-docker exec -it ros2_hil_env bash
+sh run_vehicle.sh
 ```
 
 Windows에서는 X11 GUI가 바로 표시되지 않을 수 있으므로 WSL2 또는 Ubuntu 환경을 권장합니다.
+
+Vehicle 스크립트는 컨테이너 준비·C++ 빌드·Gazebo/RViz 실행·전진/후진/좌우 회전/파킹 시연을 자동 실행합니다. 종료는 Ctrl+C입니다. 자세한 안내는 [Vehicle 실행 문서](vehicle/README.md)를 참고하세요.
+
+주행 시연 없이 Gazebo 월드·ROS bridge·Vehicle 노드의 발행·구독만 실행하려면 다음 명령을 사용합니다. RViz는 시작하지 않습니다. GUI 없이 실행하려면 `--headless`를 추가하세요.
+
+```bash
+sh run_gazebo.sh
+```
 
 ### 담당 B: Vision / Raspberry Pi
 
@@ -83,14 +90,32 @@ USB 카메라를 사용하는 경우 위 설치 과정 없이, `ls /dev/video*`�
 
 ### 담당 C: Safety / STM32 Bridge
 
-`.env`의 `SAFETY_SERIAL_DEVICE`를 실제 STM32 장치 경로로 설정한 뒤 실행합니다.
+STM32 시리얼(UART)과 ROS2를 연결하는 `safety_node`(C++)를 개발합니다. 상세 설명과 동작 확인 방법은 [`docs/safety/`](docs/safety/README.md)를 참고합니다.
 
-```bash
-docker compose -f docker-compose.yml -f docker-compose.safety.yml up -d --build
-docker exec -it ros2_hil_env bash
+**Raspberry Pi (STM32 USB 직결)**
+
+`ls /dev/ttyACM* /dev/ttyUSB*`로 장치 경로를 확인해 `.env`의 `SAFETY_SERIAL_DEVICE`에 지정한 뒤 실행합니다. (Pi 실장비 검증 전)
+
+```
+docker compose -f docker-compose.yml -f docker-compose.pi.yml -f docker-compose.safety.yml up -d --build
 ```
 
-시리얼 경로는 `ls /dev/ttyUSB*` 및 `ls /dev/ttyACM*`으로 확인합니다.
+**Mac 개발 (소켓 중계)**
+
+Mac은 USB 장치를 컨테이너에 직접 연결할 수 없어, 호스트에서 시리얼을 TCP로 중계합니다.
+
+```
+brew install socat                        # 최초 1회
+./scripts/safety/serial_relay_mac.sh      # 중계 실행 (터미널을 켜 둠)
+docker compose -f docker-compose.yml -f docker-compose.safety.mac.yml up -d
+```
+
+**노드 실행** (컨테이너 안)
+
+```
+colcon build --packages-select safety_node && source install/setup.bash
+ros2 run safety_node safety_bridge
+```
 
 ### 담당 D: Decision / State Machine
 

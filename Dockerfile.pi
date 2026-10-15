@@ -12,5 +12,8 @@ RUN apt-get update && apt-get install -y \
 # (Safety) C의 UART Bridge용
 RUN pip3 install pyserial
 
+# (Vision) B의 YOLO ONNX 추론용. apt의 python3-opencv가 numpy 1.x 기준이라 numpy 2로 올라가지 않게 고정
+RUN pip3 install onnxruntime "numpy<2"
+
 WORKDIR /ros2_ws
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc

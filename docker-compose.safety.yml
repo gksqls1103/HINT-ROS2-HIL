@@ -3,3 +3,6 @@ services:
     # C(Safety) 담당자의 STM32 시리얼 장치만 컨테이너에 연결
     devices:
       - "${SAFETY_SERIAL_DEVICE:-/dev/ttyUSB0}:/dev/ttyUSB0"
+    # safety_node가 읽는 시리얼 주소 (직결이므로 컨테이너 내부 장치 경로로)
+    environment:
+      SAFETY_SERIAL_URL: /dev/ttyUSB0

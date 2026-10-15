@@ -1,0 +1,22 @@
+{
+  "name": "HINT ROS 2 Humble (Vehicle)",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.vehicle.yml"
+  ],
+  "service": "ros2_env",
+  "workspaceFolder": "/ros2_ws/src",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ranch-hand-robotics.rde-ros-2"
+      ],
+      "settings": {
+        "C_Cpp.default.compileCommands": "/ros2_ws/build_vehicle/vehicle_node/compile_commands.json"
+      }
+    }
+  },
+  "postCreateCommand": "bash -lc 'source /opt/ros/humble/setup.bash && cd /ros2_ws && colcon build --packages-select vehicle_node --build-base build_vehicle --install-base install_vehicle --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON'"
+}
